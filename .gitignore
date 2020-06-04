@@ -1,0 +1,22 @@
+# Vim
+*.swp
+*.swo
+*.swn
+.cproject
+.project
+.settings
+.tags
+
+# Visual studio code
+.vscode
+
+# python
+*.pyc
+__pycache__
+
+# Public
+public/files/*
+public/api/*
+
+# Logs
+*_config.log

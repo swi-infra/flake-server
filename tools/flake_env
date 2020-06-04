@@ -1,0 +1,41 @@
+if ! [ -d "public" ]
+then
+    echo -e "\e[ERROR\e[0m: '$PWD' doesn't look like the root directory of a Flake repository."
+    exit 1
+else
+    export FLAKE_ROOT=$PWD
+    export FLAKE_TOOLS=$FLAKE_ROOT/tools
+    export PATH=$PATH:$FLAKE_ROOT/tools:$FLAKE_ROOT/tools/host
+    export PYTHONPATH=$PYTHONPATH:$FLAKE_TOOLS:$FLAKE_TOOLS/host:$FLAKE_TOOLS/host/lib
+fi
+
+# Check if pip3 is installed
+if ! python3 -m pip -v >/dev/null 2>&1; then
+    echo -e "\e[ERROR\e[0m: pip not available for python3"
+    if hash apt-get 2>/dev/null; then
+        echo -e "\e[ERROR\e[0m: install with:"
+        echo "sudo apt-get install python3-pip"
+        exit 1
+    fi
+fi
+
+pip_install() {
+    local req_txt="$1"
+
+    local req_hash=$(sha1sum "$req_txt" | awk '{print $1}')
+
+    if [ -n "$req_hash" ] && [ -e "$REQ_CACHE/$req_hash" ]; then
+        # Skipping, hash is already known and installed
+        return
+    fi
+
+    echo "LeTP dependencies: install $req_txt"
+
+    python3 -m pip install --user -r "$req_txt"
+
+}
+
+if [ -f "$FLAKE_TOOLS/host/requirements.txt" ]; then
+    # Install flake dependencies
+    pip_install "$FLAKE_TOOLS/host/requirements.txt"
+fi

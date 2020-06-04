@@ -1,0 +1,12 @@
+{
+    "name": "flake_legato",
+    "dev": "ens4",
+    "files": {
+        "location": "$FLAKE_ROOT/public/files"
+    },
+    "api": {
+        "ports": {
+            "location": "$FLAKE_ROOT/public/api/ports.json"
+        }
+    }
+}
