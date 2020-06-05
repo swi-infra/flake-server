@@ -6,10 +6,35 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <style>
+      .header img {
+        float: left;
+        width: 70px;
+        height: 70px;
+        margin-top:5px;
+        margin-right:10px;
+      }
+      .header h1 {
+        position: relative;
+      }
+    </style>
   </head>
 
   <body class='container'>
-    <h1 class="display-3">Flake Legato</h1>
+    <div class="header">
+      <img src="resources/legato.png" alt="legato">
+      <h1 class="display-3">Flake Legato</h1>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/files/">Files</a></li>
+          <li class="nav-item"><a class="nav-link"  href="/api/">APIs</a></li>
+        </ul>
+      </div>
+    </nav>
+    <p></p>
     <p class="lead">Flake Legato is a tool used to emulate poor network conditions.</p>
     <p class="lead">It allows testers to ensure their product can handle these network conditions well.</p>
     <hr class="my-4">
@@ -78,13 +103,16 @@
       </div>
     </form>
     <div>
-      <button type="button" class="btn btn-primary" onclick="myFunction()">Build URL</button>
+      <button type="button" class="btn btn-primary" onclick="urlBuilder()">Build URL</button>
       <hr class="my-4">
 
-      <h2 id="url"></h2>
+      URL: <input type="text" class="form-control" placeholder="http://flake.legato.io" id="url" readonly>
+
+      <button type="button" class="btn btn-primary" onclick="copyUrl()">Copy URL</button>
+
     </div>
     <script>
-      function myFunction() {
+      function urlBuilder() {
         let port = 2000;
         let url = "";
         let schemePort = {
@@ -104,7 +132,7 @@
         url += scheme
         port += schemePort[scheme];
         
-        url += "://flake.legato:"
+        url += "://flake.legato.io:"
 
         port += parseInt(document.getElementById("PacketDelay").value);
         port += parseInt(document.getElementById("PacketLoss").value);
@@ -121,7 +149,24 @@
 
         url += fileExtension[fileType]
 
-        document.getElementById("url").innerHTML = url;
+        document.getElementById("url").value = url;
+      }
+
+      function copyUrl() {
+        /* Get the url field */
+        var copyText = document.getElementById("url");
+        if (copyText.value == "") {
+          return;
+        }
+        /* Select the url field */
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+        /* Copy the url inside the text field */
+        document.execCommand("copy");
+
+        /* Alert the copied url */
+        alert("Copied URL: " + copyText.value);
       }
     </script>
   </body>

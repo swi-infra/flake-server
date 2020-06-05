@@ -1,7 +1,6 @@
-if ! [ -d "public" ]
+if ! [ -d "nginx" ]
 then
     echo -e "\e[ERROR\e[0m: '$PWD' doesn't look like the root directory of a Flake repository."
-    exit 1
 else
     export FLAKE_ROOT=$PWD
     export FLAKE_TOOLS=$FLAKE_ROOT/tools
@@ -15,7 +14,6 @@ if ! python3 -m pip -v >/dev/null 2>&1; then
     if hash apt-get 2>/dev/null; then
         echo -e "\e[ERROR\e[0m: install with:"
         echo "sudo apt-get install python3-pip"
-        exit 1
     fi
 fi
 
