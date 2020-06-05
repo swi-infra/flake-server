@@ -15,8 +15,14 @@
 __pycache__
 
 # Public
-public/files/*
-public/api/*
+**/public/files/*
+**/public/api/*
 
 # Logs
 *_config.log
+**/logs/*
+
+# Nginx
+nginx/*_temp
+nginx/nginx-*
+

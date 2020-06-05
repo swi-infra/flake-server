@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xml:lang="en">
+  <head>
+    <title>Flake Legato</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </head>
+
+  <body class='container'>
+    <h1 class="display-3">Flake Legato</h1>
+    <p class="lead">Flake Legato is a tool used to emulate poor network conditions.</p>
+    <p class="lead">It allows testers to ensure their product can handle these network conditions well.</p>
+    <hr class="my-4">
+
+    <form>
+      <div class="form-group">
+        <label for="Scheme" >Scheme: </label>
+        <select id="Scheme" class="form-control form-control-md">
+          <option value="http">http</option>
+          <option value="https">https</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="PacketDelay">Packet Delay:</label>
+        <select id="PacketDelay" class="form-control form-control-md">
+          <option value=0>0ms</option>
+          <option value=100>100ms</option>
+          <option value=200>200ms</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="PacketLoss">Packet Loss: </label>
+        <select id="PacketLoss" class="form-control form-control-md">
+          <option value=0>0%</option>
+          <option value=1>0.25%</option>
+          <option value=2>0.5%</option>
+          <option value=3>1%</option>
+          <option value=4>1.5%</option>
+          <option value=5>2.5%</option>
+          <option value=6>5%</option>
+          <option value=7>10%</option>
+          <option value=8>15%</option>
+          <option value=9>25%</option>
+          <option value=10>50%</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+      <label for="FileType">File Type: </label>
+
+      <select id="FileType" class="form-control form-control-md">
+        <option value="text">text</option>
+        <option value="binary">binary</option>
+        <option value="image">image</option>
+        <option value="video">video</option>
+        <option value="audio">audio</option>
+      </select>
+      </div>
+
+      <div class="form-group">
+      <label for="FileSize">File Size: </label>
+      <select id="FileSize" class="form-control form-control-md">
+        <option value="0.5MB">0.5MB</option>
+        <option value="1MB">1MB</option>
+        <option value="2.5MB">2.5MB</option>
+        <option value="5MB">5MB</option>
+        <option value="10MB">10MB</option>
+        <option value="15MB">15MB</option>
+        <option value="30MB">30MB</option>
+        <option value="50MB">50MB</option>
+        <option value="75MB">75MB</option>
+        <option value="100MB">100MB</option>
+      </select>
+      </div>
+    </form>
+    <div>
+      <button type="button" class="btn btn-primary" onclick="myFunction()">Build URL</button>
+      <hr class="my-4">
+
+      <h2 id="url"></h2>
+    </div>
+    <script>
+      function myFunction() {
+        let port = 2000;
+        let url = "";
+        let schemePort = {
+            "http": 0,
+            "https": 1000
+        }
+        let fileExtension = {
+            "text": ".txt",
+            "binary": ".bin",
+            "image": ".tiff",
+            "video": ".avi",
+            "audio": ".wav"
+        }
+
+        // get scheme
+        let scheme = document.getElementById("Scheme").value;
+        url += scheme
+        port += schemePort[scheme];
+        
+        url += "://flake.legato:"
+
+        port += parseInt(document.getElementById("PacketDelay").value);
+        port += parseInt(document.getElementById("PacketLoss").value);
+        url += port
+
+        url += "/"
+
+        url += document.getElementById("FileType").value;
+        let fileType = document.getElementById("FileType").value;
+
+        url += "/data_"
+
+        url += document.getElementById("FileSize").value;
+
+        url += fileExtension[fileType]
+
+        document.getElementById("url").innerHTML = url;
+      }
+    </script>
+  </body>
+</html>

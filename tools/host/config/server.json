@@ -2,11 +2,11 @@
     "name": "flake_legato",
     "dev": "ens4",
     "files": {
-        "location": "$FLAKE_ROOT/public/files"
+        "location": "$FLAKE_ROOT/nginx/public/files"
     },
     "api": {
         "ports": {
-            "location": "$FLAKE_ROOT/public/api/ports.json"
+            "location": "$FLAKE_ROOT/nginx/public/api/ports.json"
         }
     }
 }
