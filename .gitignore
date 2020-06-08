@@ -25,4 +25,7 @@ __pycache__
 # Nginx
 nginx/*_temp
 nginx/nginx-*
+nginx/sbin
+nginx/html
+nginx/ngx-fancyindex
 
