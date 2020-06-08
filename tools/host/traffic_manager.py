@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
 """Traffic control module to configure tc rules on server."""
 import os
+import flog
 from config_handler import ConfigHandler
 
 
@@ -16,22 +16,19 @@ class TrafficControl:
         self.dev = config.server["dev"]
         self.root = root
         self.index = 0
-        # Reset current rules
-        self._clear_htb()
-        self._create_htb()
 
     def run(self, cmd):
         """Run traffic control command."""
         tc_cmd = "sudo tc %s" if self.root else "tc %s"
         cmd = tc_cmd % cmd
-        print(cmd)
+        flog.debug(cmd)
         os.system(cmd)
 
     def _create_htb(self):
         """Create htb class."""
         self.run(cmd="qdisc add dev {dev} root handle 1: htb".format(dev=self.dev))
 
-    def _clear_htb(self):
+    def clear_htb(self):
         """Clear htb class."""
         self.run(cmd="qdisc del dev {dev} root htb".format(dev=self.dev))
 
@@ -74,18 +71,21 @@ class TrafficControl:
                 self._add_port_filter(class_id, p)
         else:
             self._add_port_filter(class_id, port)
-        self._add_packet_rule(class_id, packet_delay, packet_loss)
+        self.run("qdisc show dev {dev}".format(dev=self.dev))
 
     def show_rules(self):
         """Print rules to console."""
-        print("Rules:")
+        flog.info("Rules:")
         self.run("qdisc show dev {dev}".format(dev=self.dev))
 
     def configure(self):
         """Configure server based on config rules."""
+        # Reset current rules
+        self.clear_htb()
+        self._create_htb()
         for name, setup in self.config.items():
-            print("Configuring for set: {name}".format(name=name))
-            print(
+            flog.info("Configuring for set: {name}".format(name=name))
+            flog.info(
                 "Packet delays: {delay}, Packet loss: {loss}, Ports: {ports}".format(
                     delay=setup["packet_delay"],
                     loss=setup["packet_loss"],
@@ -102,7 +102,7 @@ class TrafficControl:
                 )
 
 
-def configure_server_rules(config_file):
+def configure_server_rules(config_file=CONFIG):
     """Configure server rules."""
     config = ConfigHandler(config_file)
     tc_manager = TrafficControl(config)
@@ -110,5 +110,7 @@ def configure_server_rules(config_file):
     tc_manager.show_rules()
 
 
-if __name__ == "__main__":
-    configure_server_rules(CONFIG)
+def clear_rules(config_file=CONFIG):
+    """Wipe server rules."""
+    config = ConfigHandler(config_file)
+    TrafficControl(config).clear_htb()

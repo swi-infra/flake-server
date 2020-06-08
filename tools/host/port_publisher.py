@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Publish port configuration to external api."""
 import os
 import json
@@ -45,12 +44,8 @@ class PortConfiguration:
             json.dump(self.ports, f, indent=2)
 
 
-def publish_ports(config_file):
+def publish_ports(config_file=CONFIG):
     """Configure server files."""
     config = ConfigHandler(config_file)
     port_handler = PortConfiguration(config)
     port_handler.publish()
-
-
-if __name__ == "__main__":
-    publish_ports(CONFIG)

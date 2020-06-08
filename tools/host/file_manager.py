@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Data file creation module to configure data files on server."""
 import os
 import re
@@ -9,6 +8,7 @@ import numpy as np
 from scipy.io import wavfile
 from PIL import Image, ImageDraw
 from cv2 import VideoWriter, VideoWriter_fourcc
+import flog
 from config_handler import ConfigHandler
 
 
@@ -43,8 +43,8 @@ class DataFile:
         try:
             data_handler = eval(data_class)
         except NameError as e:
-            print(
-                "ERROR: cannot find class %s, %s is not a valid data type."
+            flog.error(
+                "cannot find class %s, %s is not a valid data type."
                 % (data_class, data_type)
             )
             raise e
@@ -91,7 +91,7 @@ class TextFile(DataFile):
     def create_file(self, size):
         """Create data file (text)."""
         file_path = self._generate_file_path(size)
-        print("Creating a text file %s of size %s" % (file_path, size))
+        flog.info("Creating a text file %s of size %s" % (file_path, size))
         byte_size = self._parse_size(size)
         with open(file_path, "w") as f:
             f.write("".join(np.random.choice(list(string.ascii_lowercase), byte_size)))
@@ -107,7 +107,7 @@ class BinaryFile(DataFile):
     def create_file(self, size):
         """Create data file (binary)."""
         file_path = self._generate_file_path(size)
-        print("Creating a binary file %s of size %s" % (file_path, size))
+        flog.info("Creating a binary file %s of size %s" % (file_path, size))
         byte_size = self._parse_size(size)
         with open(file_path, "wb") as f:
             f.write(os.urandom(byte_size))
@@ -123,7 +123,7 @@ class ImageFile(DataFile):
     def create_file(self, size):
         """Create data file (image)."""
         file_path = self._generate_file_path(size)
-        print("Creating a image file %s of size %s" % (file_path, size))
+        flog.info("Creating a image file %s of size %s" % (file_path, size))
         byte_size = self._parse_size(size)
         # Need a slow growing series sqrt(x)/2.048 works for this.
         size = int(np.sqrt(byte_size) / 2.048)
@@ -152,7 +152,7 @@ class VideoFile(DataFile):
     def create_file(self, size):
         """Create data file (video)."""
         file_path = self._generate_file_path(size)
-        print("Creating a video file %s of size %s" % (file_path, size))
+        flog.info("Creating a video file %s of size %s" % (file_path, size))
         byte_size = self._parse_size(size)
         width = 500
         height = 500
@@ -179,7 +179,7 @@ class AudioFile(DataFile):
     def create_file(self, size):
         """Create data file (audio)."""
         file_path = self._generate_file_path(size)
-        print("Creating a audio file %s of size %s" % (file_path, size))
+        flog.info("Creating a audio file %s of size %s" % (file_path, size))
         byte_size = self._parse_size(size)
         # Need to take fraction of the size to get correct output size.
         length = byte_size / 370000
@@ -190,7 +190,7 @@ class AudioFile(DataFile):
         wavfile.write(file_path, sample_rate, y)
 
 
-def configure_files(config_file):
+def configure_files(config_file=CONFIG):
     """Configure server files."""
     config = ConfigHandler(config_file)
     configuration_times = {}
@@ -203,8 +203,5 @@ def configure_files(config_file):
         data_handler.configure()
         configuration_times[data_type] = "%ss" % format(time.time() - start_time, ".2f")
     configuration_times["Total"] = "%ss" % format(time.time() - total_time, ".2f")
-    print("Time to configure files:\n%s" % configuration_times)
-
-
-if __name__ == "__main__":
-    configure_files(CONFIG)
+    flog.info("Time to configure files:\n%s" % configuration_times)
+    return True

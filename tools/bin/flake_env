@@ -4,9 +4,14 @@ then
 else
     export FLAKE_ROOT=$PWD
     export FLAKE_TOOLS=$FLAKE_ROOT/tools
-    export PATH=$PATH:$FLAKE_ROOT/tools:$FLAKE_ROOT/tools/host
+    export FLAKE_SERVER=$FLAKE_ROOT/nginx
+    export PATH=$PATH:$FLAKE_TOOLS:$FLAKE_TOOLS/bin:$FLAKE_TOOLS/host
     export PYTHONPATH=$PYTHONPATH:$FLAKE_TOOLS:$FLAKE_TOOLS/host:$FLAKE_TOOLS/host/lib
 fi
+
+echo "Exporting FLAKE_ROOT as $FLAKE_ROOT"
+echo "Exporting FLAKE_TOOLS as $FLAKE_TOOLS"
+echo "Exporting FLAKE_SERVER as $FLAKE_SERVER"
 
 # Check if pip3 is installed
 if ! python3 -m pip -v >/dev/null 2>&1; then
@@ -27,7 +32,7 @@ pip_install() {
         return
     fi
 
-    echo "LeTP dependencies: install $req_txt"
+    echo "Flake dependencies: install $req_txt"
 
     python3 -m pip install --user -r "$req_txt"
 
