@@ -65,9 +65,9 @@ class TrafficControl:
         self, class_id, port, packet_delay=None, packet_loss=None, rate="1000mbit"
     ):
         """Add rule for packet delay and packet loss."""
-        self._create_htb_class(class_id, rate)
-        if isinstance(port, list):
-            for p in port:
+        self._create_htb_class(class_id, rate)        
+        if isinstance(port, dict):
+            for p in port.values():
                 self._add_port_filter(class_id, p)
         else:
             self._add_port_filter(class_id, port)

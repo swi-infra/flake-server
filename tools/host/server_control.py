@@ -64,12 +64,14 @@ class Server:
             file_manager.configure_files()
         port_publisher.publish_ports()
         traffic_manager.configure_server_rules()
+        flog.info("Starting Flake")
         assert self.run(
             ServerAction.start, config_file
         ), "Could not start nginx, maybe a process is already running.\n(try running server stop --force)"
 
     def stop(self, force=False):
         """Stop the server."""
+        flog.info("Stopping Flake")
         if os.path.exists(self.pid):
             flog.info("Stopping nginx using nginx method")
             self.run(ServerAction.stop)

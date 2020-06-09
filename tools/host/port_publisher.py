@@ -1,6 +1,7 @@
 """Publish port configuration to external api."""
 import os
 import json
+import flog
 from config_handler import ConfigHandler
 
 
@@ -28,14 +29,15 @@ class PortConfiguration:
         ports_data = {
             "http": {},
             "https": {},
+            "udp": {},
         }
         for setup in self.config.values():
             loss = setup["packet_loss"]
-            ports_data["http"][loss] = {}
-            ports_data["https"][loss] = {}
+            for key in ports_data.keys():
+                ports_data[key][loss] = {}
             for delay, ports in zip(setup["packet_delay"], setup["ports"]):
-                ports_data["http"][loss][delay] = {"port": ports[0]}
-                ports_data["https"][loss][delay] = {"port": ports[1]}
+                for key in ports_data.keys():
+                    ports_data[key][loss][delay] = {"port": ports[key]}
         return ports_data
 
     def publish(self):
@@ -48,4 +50,5 @@ def publish_ports(config_file=CONFIG):
     """Configure server files."""
     config = ConfigHandler(config_file)
     port_handler = PortConfiguration(config)
+    flog.info("Publishing ports")
     port_handler.publish()
