@@ -1,27 +1,82 @@
 {
-    "text": {
-        "base_name": "data_",
-        "extension": ".txt",
-        "size_list": ["0.5MB", "1MB", "2.5MB", "5MB", "10MB", "15MB", "30MB", "50MB", "75MB", "100MB"]
-    },
-    "binary": {
-        "base_name": "data_",
-        "extension": ".bin",
-        "size_list": ["0.5MB", "1MB", "2.5MB", "5MB", "10MB", "15MB", "30MB", "50MB", "75MB", "100MB"]
-    },
-    "image": {
-        "base_name": "data_",
-        "extension": ".tiff",
-        "size_list": ["0.5MB", "1MB", "2.5MB", "5MB", "10MB", "15MB", "30MB", "50MB", "75MB", "100MB"]
-    },
-    "video": {
-        "base_name": "data_",
-        "extension": ".avi",
-        "size_list": ["0.5MB", "1MB", "2.5MB", "5MB", "10MB", "15MB", "30MB", "50MB", "75MB", "100MB"]
-    },
-    "audio": {
-        "base_name": "data_",
-        "extension": ".wav",
-        "size_list": ["0.5MB", "1MB", "2.5MB", "5MB", "10MB", "15MB", "30MB", "50MB", "75MB", "100MB"]
-    }
+  "text": {
+    "base_name": "data_",
+    "extension": ".txt",
+    "size_list": [
+      "0.5MB",
+      "1MB",
+      "2.5MB",
+      "5MB",
+      "10MB",
+      "15MB",
+      "30MB",
+      "50MB",
+      "75MB",
+      "100MB"
+    ]
+  },
+  "binary": {
+    "base_name": "data_",
+    "extension": ".bin",
+    "size_list": [
+      "0.5MB",
+      "1MB",
+      "2.5MB",
+      "5MB",
+      "10MB",
+      "15MB",
+      "30MB",
+      "50MB",
+      "75MB",
+      "100MB"
+    ]
+  },
+  "image": {
+    "base_name": "data_",
+    "extension": ".tiff",
+    "size_list": [
+      "0.5MB",
+      "1MB",
+      "2.5MB",
+      "5MB",
+      "10MB",
+      "15MB",
+      "30MB",
+      "50MB",
+      "75MB",
+      "100MB"
+    ]
+  },
+  "video": {
+    "base_name": "data_",
+    "extension": ".avi",
+    "size_list": [
+      "0.5MB",
+      "1MB",
+      "2.5MB",
+      "5MB",
+      "10MB",
+      "15MB",
+      "30MB",
+      "50MB",
+      "75MB",
+      "100MB"
+    ]
+  },
+  "audio": {
+    "base_name": "data_",
+    "extension": ".wav",
+    "size_list": [
+      "0.5MB",
+      "1MB",
+      "2.5MB",
+      "5MB",
+      "10MB",
+      "15MB",
+      "30MB",
+      "50MB",
+      "75MB",
+      "100MB"
+    ]
+  }
 }

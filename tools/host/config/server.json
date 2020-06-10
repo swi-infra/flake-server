@@ -1,12 +1,16 @@
 {
-    "name": "flake_legato",
-    "dev": "ens4",
-    "files": {
-        "location": "$FLAKE_ROOT/nginx/public/files"
-    },
-    "api": {
-        "ports": {
-            "location": "$FLAKE_ROOT/nginx/public/api/ports.json"
-        }
+  "name": "flake_legato",
+  "files": {
+    "location": "$FLAKE_SERVER/public/files"
+  },
+  "api": {
+    "ports": {
+      "location": "$FLAKE_SERVER/public/api/ports.json"
     }
+  },
+  "ports": {
+    "http": ["80", "2000:2049", "2100:2149", "2200:2249"],
+    "https": ["443", "3000:3049", "3100:3149", "3200:3249"],
+    "udp": ["4000", "4001:4049", "4100:4149", "4200:4249"]
+  }
 }

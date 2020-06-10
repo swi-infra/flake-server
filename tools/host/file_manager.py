@@ -26,7 +26,6 @@ class DataFile:
         base_folder = server_config["files"]["location"]
         base_folder = os.path.expandvars(base_folder)
         self._data_path = os.path.join(base_folder, data_path)
-        self._clear_data_folder()
         # Data conversion units
         self._units = {
             "B": 1,
@@ -75,10 +74,24 @@ class DataFile:
         number, unit = [tmp_str.strip() for tmp_str in size.split()]
         return int(float(number) * self._units[unit])
 
-    def configure(self):
+    def configure(self, force=False):
         """Create files."""
+        if force:
+            self._clear_data_folder()
         for size in self._size_list:
-            self.create_file(size)
+            if force or not self.check_file(size):
+                self.create_file(size)
+        return True
+
+    def check_file(self, size):
+        """Check if file exists."""
+        file_path = self._generate_file_path(size)
+        flog.info("Checking if {} exists".format(file_path))
+        if not os.path.exists(file_path):
+            flog.warning("{} does not exist".format(file_path))
+            return False
+        flog.info("{} exists".format(file_path))
+        return True
 
 
 class TextFile(DataFile):
@@ -190,7 +203,7 @@ class AudioFile(DataFile):
         wavfile.write(file_path, sample_rate, y)
 
 
-def configure_files(config_file=CONFIG):
+def configure_files(force=False, config_file=CONFIG):
     """Configure server files."""
     config = ConfigHandler(config_file)
     configuration_times = {}
@@ -200,7 +213,7 @@ def configure_files(config_file=CONFIG):
         data_handler = DataFile.get_data_handler(
             data_type=data_type, config=data_values, server_config=config.server
         )
-        data_handler.configure()
+        data_handler.configure(force)
         configuration_times[data_type] = "%ss" % format(time.time() - start_time, ".2f")
     configuration_times["Total"] = "%ss" % format(time.time() - total_time, ".2f")
     flog.info("Time to configure files:\n%s" % configuration_times)

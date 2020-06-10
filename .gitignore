@@ -23,9 +23,4 @@ __pycache__
 **/logs/*
 
 # Nginx
-nginx/*_temp
-nginx/nginx-*
-nginx/sbin
-nginx/html
-nginx/ngx-fancyindex
-
+nginx/logs/*

@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  web:
+    build: .
+    image: $USER/nginx-xtra
+    privileged: true
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2000-2049:2000-2049"
+      - "3000-3049:3000-3049"
+      - "4000-4049:4000-4049/udp"
+    volumes:
+      - "./nginx/logs:/usr/share/nginx/logs"

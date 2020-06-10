@@ -26,11 +26,7 @@ class PortConfiguration:
 
     def parse_config(self):
         """Parse port config file."""
-        ports_data = {
-            "http": {},
-            "https": {},
-            "udp": {},
-        }
+        ports_data = {"http": {}, "https": {}, "udp": {}}
         for setup in self.config.values():
             loss = setup["packet_loss"]
             for key in ports_data.keys():
@@ -42,8 +38,12 @@ class PortConfiguration:
 
     def publish(self):
         """Publish ports to file."""
-        with open(self.port_config, "w") as f:
-            json.dump(self.ports, f, indent=2)
+        try:
+            with open(self.port_config, "w") as f:
+                json.dump(self.ports, f, indent=2)
+            return True
+        except Exception:
+            return False
 
 
 def publish_ports(config_file=CONFIG):
@@ -51,4 +51,4 @@ def publish_ports(config_file=CONFIG):
     config = ConfigHandler(config_file)
     port_handler = PortConfiguration(config)
     flog.info("Publishing ports")
-    port_handler.publish()
+    return port_handler.publish()
