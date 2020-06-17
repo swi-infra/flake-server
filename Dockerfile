@@ -32,5 +32,11 @@ RUN mkdir -p /usr/share/nginx/logs
 EXPOSE 80/tcp \
        443/tcp \
        2000-2049/tcp \
+       2100-2149/tcp \
+       2200-2249/tcp \
        3000-3049/tcp \
-       4000-4049/udp
+       3100-3149/tcp \
+       3200-3249/tcp \
+       4000-4049/udp \
+       4100-4149/udp \
+       4200-4249/udp
