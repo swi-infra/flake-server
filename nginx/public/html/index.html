@@ -63,7 +63,7 @@
     </p>
     <hr class="my-4" />
 
-    <form>
+    <form onchange="urlBuilder()">
       <div class="form-group">
         <label for="Scheme">Scheme: </label>
         <select id="Scheme" class="form-control form-control-md">
@@ -128,11 +128,7 @@
       </div>
     </form>
     <div>
-      <button type="button" class="btn btn-primary" onclick="urlBuilder()">
-        Build URL
-      </button>
       <hr class="my-4" />
-
       URL:
       <input
         type="text"
