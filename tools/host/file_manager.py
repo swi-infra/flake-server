@@ -6,8 +6,7 @@ import shutil
 import string
 import numpy as np
 from scipy.io import wavfile
-from PIL import Image, ImageDraw
-from cv2 import VideoWriter, VideoWriter_fourcc
+from PIL import Image
 import flog
 from config_handler import ConfigHandler
 
@@ -106,8 +105,20 @@ class TextFile(DataFile):
         file_path = self._generate_file_path(size)
         flog.info("Creating a text file %s of size %s" % (file_path, size))
         byte_size = self._parse_size(size)
+        chunk_size = 1024
         with open(file_path, "w") as f:
-            f.write("".join(np.random.choice(list(string.ascii_lowercase), byte_size)))
+            while byte_size > 0:
+                write_size = byte_size
+                if write_size > chunk_size:
+                    write_size = chunk_size
+                f.write(
+                    "".join(
+                        np.random.choice(
+                            list(string.ascii_letters + string.digits), write_size
+                        )
+                    )
+                )
+                byte_size -= write_size
 
 
 class BinaryFile(DataFile):
@@ -122,8 +133,14 @@ class BinaryFile(DataFile):
         file_path = self._generate_file_path(size)
         flog.info("Creating a binary file %s of size %s" % (file_path, size))
         byte_size = self._parse_size(size)
+        chunk_size = 1024 * 1024
         with open(file_path, "wb") as f:
-            f.write(os.urandom(byte_size))
+            while byte_size > 0:
+                write_size = byte_size
+                if write_size > chunk_size:
+                    write_size = chunk_size
+                f.write(os.urandom(write_size))
+                byte_size -= write_size
 
 
 class ImageFile(DataFile):
@@ -138,21 +155,12 @@ class ImageFile(DataFile):
         file_path = self._generate_file_path(size)
         flog.info("Creating a image file %s of size %s" % (file_path, size))
         byte_size = self._parse_size(size)
-        # Need a slow growing series sqrt(x)/2.048 works for this.
-        size = int(np.sqrt(byte_size) / 2.048)
-        img = Image.new("F", (size, size))
-        draw = ImageDraw.Draw(img)
-        half_size = int(size / 2)
-        colours = ("red", "green", "blue", "yellow")
-        index = 0
-        for x in (0, half_size):
-            for y in (0, half_size):
-                c0 = (x, y)
-                c1 = (x + half_size, y + half_size)
-                draw.rectangle((c0, c1), fill=colours[index])
-                index += 1
-        del draw
-        img.save(file_path)
+        # Need a slow growing series sqrt(x)/2 works for this.
+        size = int(np.sqrt(byte_size) / 2)
+
+        d = np.random.random_sample((size, size)).astype(np.float32)
+        im = Image.fromarray(d, mode="F")
+        im.save(file_path)
 
 
 class VideoFile(DataFile):
@@ -161,25 +169,23 @@ class VideoFile(DataFile):
     def __init__(self, config, server_config):
         """Initialize video file handler."""
         super().__init__(config, server_config, "video")
+        self.template = os.path.expandvars(
+            "$FLAKE_TOOLS/host/resources/template_0.5MB.avi"
+        )
 
     def create_file(self, size):
         """Create data file (video)."""
         file_path = self._generate_file_path(size)
         flog.info("Creating a video file %s of size %s" % (file_path, size))
         byte_size = self._parse_size(size)
-        width = 500
-        height = 500
-        FPS = 50
-        # Need a series series to match growth of file.
-        seconds = float(float(byte_size ** 1.00433) / float(142000))
-        fourcc = VideoWriter_fourcc(*"XVID")
-        video = VideoWriter(file_path, fourcc, float(FPS), (width, height))
+        file_str = self.template
+        template_size = self._parse_size("0.5MB")
+        while template_size < byte_size:
+            file_str += "|{}".format(self.template)
+            byte_size -= template_size
 
-        for i in range(int(FPS * seconds)):
-            a = np.zeros((height, width, 3), np.uint8)
-            a.fill(i % 256)
-            video.write(a)
-        video.release()
+        cmd = 'ffmpeg -i "concat:{}" -c copy {}'.format(file_str, file_path)
+        assert os.system(cmd) == 0, "Failed to create video"
 
 
 class AudioFile(DataFile):
@@ -195,7 +201,7 @@ class AudioFile(DataFile):
         flog.info("Creating a audio file %s of size %s" % (file_path, size))
         byte_size = self._parse_size(size)
         # Need to take fraction of the size to get correct output size.
-        length = byte_size / 370000
+        length = byte_size / 352830
         sample_rate = 44100
         frequency = 440.0
         t = np.linspace(0, length, int(sample_rate * length))

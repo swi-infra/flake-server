@@ -13,6 +13,7 @@ RUN apt-get update && \
     libxrender-dev \
     python3-dev \
     python3-setuptools \
+    ffmpeg \
     python3-pip && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

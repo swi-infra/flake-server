@@ -78,7 +78,7 @@ def main():
     """Parse arguments."""
     parser = argparse.ArgumentParser(description="Flake Legato CLI Tool.")
     parser.add_argument(
-        "action", type=str, help="action for flake server [configure|test]"
+        "action", type=str, help="action for flake server", choices=["configure", "test"]
     )
     parser.add_argument("-f", "--force", action="store_true", help="force action")
 

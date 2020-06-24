@@ -1,7 +1,14 @@
 #!/bin/bash
 
-export FLAKE_TOOLS=/tools
-export FLAKE_SERVER=/usr/share/nginx
+if test -n "$BASH" ; then script="$BASH_SOURCE"
+elif test -n "$TMOUT"; then script="${.sh.file}"
+elif test -n "$ZSH_NAME" ; then script="${(%):-%x}"
+elif test "${0##*/}" = dash; then x="$(lsof -p $$ -Fn0 | tail -1)"; script="${x#n}"
+else script="$0"
+fi
+
+export FLAKE_TOOLS=${FLAKE_TOOLS:-$(dirname $(dirname $(readlink -f $script)))}
+export FLAKE_SERVER=${FLAKE_SERVER:-/usr/share/nginx}
 export PATH=$PATH:$FLAKE_TOOLS:$FLAKE_TOOLS/bin:$FLAKE_TOOLS/host
 export PYTHONPATH=$PYTHONPATH:$FLAKE_TOOLS:$FLAKE_TOOLS/host:$FLAKE_TOOLS/host/lib
 
