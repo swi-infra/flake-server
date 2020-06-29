@@ -26,7 +26,7 @@ class PortConfiguration:
 
     def parse_config(self):
         """Parse port config file."""
-        ports_data = {"http": {}, "https": {}, "udp": {}}
+        ports_data = {"http": {}, "https": {}, "udp": {}, "iperf": {}}
         for setup in self.config.values():
             loss = setup["packet_loss"]
             for key in ports_data.keys():
