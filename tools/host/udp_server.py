@@ -29,7 +29,7 @@ class UdpServer:
         else:
             path = os.path.join(self.root, path)
         if not os.path.exists(path):
-            return b"Incorrect path {}".format(path)
+            return str.encode("Incorrect path {}".format(path))
         with open(path, "rb") as f:
             return f.read()
 
@@ -62,6 +62,7 @@ class UdpServer:
 
 def run_server(config_file=CONFIG):
     """Run udp server."""
+    flog.info("Starting UDP server")
     config = ConfigHandler(config_file)
     udp_server = UdpServer(config)
     udp_server.run()

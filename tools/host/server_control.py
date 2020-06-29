@@ -5,6 +5,7 @@ from enum import Enum
 import file_manager
 import port_publisher
 import traffic_manager
+import iperf3_manager
 import flog
 
 
@@ -47,6 +48,8 @@ class Server:
         flog.info("---- Successfully configured traffic rules ----")
         assert self.start_udp_server(), "failed to start UDP server."
         flog.info("---- Successfully started UDP server ----")
+        assert iperf3_manager.start_iperf(), "failed to start iperf server."
+        flog.info("---- Successfully started iperf on server ----")
         return True
 
     def add_files(self, force=False):
@@ -61,7 +64,8 @@ class Server:
     def start_udp_server(self):
         """Start udp server as background process."""
         script_path = os.path.join(self.server_tools, "host/udp_server.py")
-        cmd = "python3 {} &".format(script_path)
+        log_file = os.path.expandvars("$FLAKE_SERVER/logs/udp_server.log")
+        cmd = "python3 -u {} > {} &".format(script_path, log_file)
         return os.system(cmd) == 0
 
     def run_action(self, action, config_file=None, force=False):
@@ -78,7 +82,10 @@ def main():
     """Parse arguments."""
     parser = argparse.ArgumentParser(description="Flake Legato CLI Tool.")
     parser.add_argument(
-        "action", type=str, help="action for flake server", choices=["configure", "test"]
+        "action",
+        type=str,
+        help="action for flake server",
+        choices=["configure", "test"],
     )
     parser.add_argument("-f", "--force", action="store_true", help="force action")
 

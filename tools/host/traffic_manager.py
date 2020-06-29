@@ -33,17 +33,15 @@ class TrafficControl:
         flog.debug("dev: {}".format(rsp))
         return rsp
 
-    def accept_ports(self, scheme, ports):
+    def accept_ports(self, protocol, ports):
         """Accept ports via iptables."""
-        protocol = "tcp" if "http" in scheme else "udp"
         cmd = "iptables -I INPUT -p {protocol} --match multiport --dport {ports} -j ACCEPT"
         ports_list = ",".join(ports)
         cmd = cmd.format(ports=ports_list, protocol=protocol)
         return self.run(cmd, tc=False)
 
-    def redirect_ports(self, scheme, src_list, dst):
+    def redirect_ports(self, protocol, src_list, dst):
         """Redirect ports via iptables."""
-        protocol = "tcp" if "http" in scheme else "udp"
         cmd = (
             "iptables -t nat -I PREROUTING -p {protocol} "
             "--match multiport --dport {ports} -j REDIRECT --to-port {dst}"
@@ -67,16 +65,17 @@ class TrafficControl:
         Redirects traffic on simulation ports to default ports.
         Configuration specified in server config.
         """
-        flog.info("Accepting ports")
-        for scheme, port_set in self.server_config["ports"].items():
-            if not self.accept_ports(scheme=scheme, ports=port_set):
-                return False
-        flog.info("Redirecting ports")
-        for scheme, port_list in self.server_config["ports"].items():
-            if not self.redirect_ports(
-                scheme=scheme, src_list=port_list[1:], dst=port_list[0]
-            ):
-                return False
+        flog.info("Accepting and redirecting ports")
+        for protocol, protocol_set in self.server_config["ports"].items():
+            for default_port, port_set in protocol_set.items():
+                if default_port != "null":
+                    port_set.append(default_port)
+                if not self.accept_ports(protocol=protocol, ports=port_set):
+                    return False
+                if default_port != "null" and not self.redirect_ports(
+                    protocol=protocol, src_list=port_set, dst=default_port
+                ):
+                    return False
         self.show_ip_tables()
         return True
 

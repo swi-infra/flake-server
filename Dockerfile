@@ -11,6 +11,7 @@ RUN apt-get update && \
     libsm6 \
     libxext6 \
     libxrender-dev \
+    iperf3 \
     python3-dev \
     python3-setuptools \
     ffmpeg \
@@ -40,4 +41,7 @@ EXPOSE 80/tcp \
        3200-3249/tcp \
        4000-4049/udp \
        4100-4149/udp \
-       4200-4249/udp
+       4200-4249/udp \
+       5000-5049/tcp \
+       5100-5149/tcp \
+       5200-5249/tcp
