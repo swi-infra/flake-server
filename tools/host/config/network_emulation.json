@@ -1,4 +1,13 @@
 {
+  "loss_0": {
+    "packet_delay": ["0ms", "100ms", "200ms"],
+    "packet_loss": "0%",
+    "ports": [
+      { "http": "2000", "https": "3000", "udp": "4000", "iperf": "5000" },
+      { "http": "2100", "https": "3100", "udp": "4100", "iperf": "5100" },
+      { "http": "2200", "https": "3200", "udp": "4200", "iperf": "5200" }
+    ]
+  },
   "loss_0.25": {
     "packet_delay": ["0ms", "100ms", "200ms"],
     "packet_loss": "0.25%",

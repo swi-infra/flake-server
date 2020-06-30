@@ -6,6 +6,7 @@ import file_manager
 import port_publisher
 import traffic_manager
 import iperf3_manager
+import pcap_manager
 import flog
 
 
@@ -50,6 +51,8 @@ class Server:
         flog.info("---- Successfully started UDP server ----")
         assert iperf3_manager.start_iperf(), "failed to start iperf server."
         flog.info("---- Successfully started iperf on server ----")
+        assert pcap_manager.start_pcap(), "failed to start pcap."
+        flog.info("---- Successfully started pcap on server ----")
         return True
 
     def add_files(self, force=False):

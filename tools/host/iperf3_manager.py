@@ -1,4 +1,4 @@
-"""Iperf3 control module to configure iperf script on server."""
+"""Iperf3 control module to configure iperf on server."""
 import os
 import flog
 from config_handler import ConfigHandler
@@ -16,7 +16,6 @@ class Iperf:
         self.server = config.server
         self.log_file = os.path.expandvars(self.server["iperf"]["log"])
         self.ports = self.get_ports()
-        self.ports.append(self.server["iperf"]["port"])
 
     def get_ports(self):
         "Return list of ports used for iperf."
@@ -30,11 +29,11 @@ class Iperf:
 
     def run_cmd(self):
         """Run iperf command."""
-        iperf_cmd = "iperf3 -s -p {port} >{log_file} 2>&1 &\n"
+        iperf_cmd = "iperf3 -s -p {port} >{log_file} 2>&1 &"
         for port in self.ports:
-            assert (
-                os.system(iperf_cmd.format(port=port, log_file=self.log_file)) == 0
-            ), "Failed to start iperf"
+            cmd = iperf_cmd.format(port=port, log_file=self.log_file)
+            flog.debug(cmd)
+            assert os.system(cmd) == 0, "Failed to start iperf"
 
     def start(self):
         """Start iperf."""
@@ -49,6 +48,7 @@ class Iperf:
 
 def start_iperf(config_file=CONFIG):
     """Start iperf on server."""
+    flog.info("Starting iperf")
     config = ConfigHandler(config_file)
     iperf_handler = Iperf(config)
     return iperf_handler.start()
