@@ -18,7 +18,7 @@ class UdpServer:
         self.buffer = int(self.config.server["udp"]["buffer"])
         self.root = os.path.expandvars("$FLAKE_SERVER/public")
         self.udp_server = socket(AF_INET, SOCK_DGRAM)
-        self.local_ip = "127.0.0.1"
+        self.local_ip = "0.0.0.0"
 
     def get_file(self, path):
         """Parse path and return file."""
@@ -31,6 +31,7 @@ class UdpServer:
         if not os.path.exists(path):
             return str.encode("Incorrect path {}".format(path))
         with open(path, "rb") as f:
+            flog.info("Sending file {}".format(path))
             return f.read()
 
     def send_file(self, data, addr):
@@ -38,7 +39,6 @@ class UdpServer:
 
         File must be split into smaller packets and sent."""
         data_size = len(data)
-        print(data_size)
         increments = 1024
         for section in range(0, data_size, increments):
             self.udp_server.sendto(data[section : (section + increments)], addr)
