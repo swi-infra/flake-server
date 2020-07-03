@@ -13,6 +13,7 @@ RUN apt-get update && \
     libxrender-dev \
     iperf3 \
     tcpdump \
+    cron \
     python3-dev \
     python3-setuptools \
     ffmpeg \

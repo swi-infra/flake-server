@@ -5,7 +5,6 @@ from enum import Enum
 import file_manager
 import port_publisher
 import traffic_manager
-import iperf3_manager
 import pcap_manager
 import flog
 
@@ -49,8 +48,8 @@ class Server:
         flog.info("---- Successfully configured traffic rules ----")
         assert self.start_udp_server(), "failed to start UDP server."
         flog.info("---- Successfully started UDP server ----")
-        assert iperf3_manager.start_iperf(), "failed to start iperf server."
-        flog.info("---- Successfully started iperf on server ----")
+        assert self.configure_iperf(), "failed to configure iperf server."
+        flog.info("---- Successfully configured iperf on server ----")
         assert pcap_manager.start_pcap(), "failed to start pcap."
         flog.info("---- Successfully started pcap on server ----")
         return True
@@ -67,9 +66,36 @@ class Server:
     def start_udp_server(self):
         """Start udp server as background process."""
         script_path = os.path.join(self.server_tools, "host/udp_server.py")
-        log_file = os.path.expandvars("$FLAKE_SERVER/logs/udp_server.log")
-        cmd = "python3 -u {} > {} &".format(script_path, log_file)
+        log_file = os.path.join(self.server_root, "logs/udp_server.log")
+        cmd = "python3 -u {} > {} 2>&1 &".format(script_path, log_file)
+        flog.debug("Starting udp server with: {}".format(cmd))
         return os.system(cmd) == 0
+
+    def configure_iperf(self):
+        """Configure iperf cron settings."""
+        flog.debug("configuring cron for iperf")
+        script_path = os.path.join(self.server_tools, "host/iperf3_manager.py")
+        log_file = os.path.join(self.server_root, "logs/iperf_manager.log")
+        env_vars = "PYTHONPATH={} FLAKE_SERVER={} FLAKE_TOOLS={}".format(
+            os.environ.get("PYTHONPATH"),
+            os.environ.get("FLAKE_SERVER"),
+            os.environ.get("FLAKE_TOOLS"),
+        )
+        script = "python3 -u {} > {} 2>&1".format(script_path, log_file)
+        cmd = "{vars} {script}".format(vars=env_vars, script=script)
+        cron_cmd = '(crontab -l ; echo "{cron_time} {cmd}") | crontab -'.format(
+            cron_time="0 */6 * * *", cmd=cmd
+        )
+        try:
+            # Initial start
+            assert os.system(cmd) == 0, "Failed to start iperf3"
+            # Configure cron
+            assert os.system(cron_cmd) == 0, "Failed to configure cron"
+            assert os.system("/etc/init.d/cron restart") == 0, "Failed to start cron"
+        except AssertionError as e:
+            flog.error(e)
+            return False
+        return True
 
     def run_action(self, action, config_file=None, force=False):
         """Run action."""

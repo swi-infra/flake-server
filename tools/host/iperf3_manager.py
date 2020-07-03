@@ -16,6 +16,16 @@ class Iperf:
         self.server = config.server
         self.log_file = os.path.expandvars(self.server["iperf"]["log"])
         self.ports = self.get_ports()
+        self.clean()
+
+    def clean(self):
+        """Clean system before starting."""
+        try:
+            os.system("pkill iperf3")
+        except OSError:
+            pass
+        if os.path.exists(self.log_file):
+            os.remove(self.log_file)
 
     def get_ports(self):
         "Return list of ports used for iperf."
@@ -29,7 +39,7 @@ class Iperf:
 
     def run_cmd(self):
         """Run iperf command."""
-        iperf_cmd = "iperf3 -s -p {port} >{log_file} 2>&1 &"
+        iperf_cmd = "iperf3 -s -p {port} --logfile {log_file} -D"
         for port in self.ports:
             cmd = iperf_cmd.format(port=port, log_file=self.log_file)
             flog.debug(cmd)
@@ -52,3 +62,7 @@ def start_iperf(config_file=CONFIG):
     config = ConfigHandler(config_file)
     iperf_handler = Iperf(config)
     return iperf_handler.start()
+
+
+if __name__ == "__main__":
+    start_iperf()
