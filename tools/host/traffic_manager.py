@@ -1,11 +1,18 @@
 """Traffic control module to configure tc rules on server."""
 import os
 import subprocess
+from enum import Enum
 import flog
 from config_handler import ConfigHandler
 
-
 CONFIG = "$FLAKE_TOOLS/host/config/network_emulation.json"
+
+
+class Command(Enum):
+    """Command enum."""
+
+    Tc = "tc"
+    Iptables = "iptables"
 
 
 class TrafficControl:
@@ -18,10 +25,10 @@ class TrafficControl:
         self.dev = self._get_dev()
         self.index = 0
 
-    def run(self, cmd, tc=True, output=False):
+    def run(self, command, tool=Command.Tc, output=False):
         """Run traffic control command."""
-        pre_cmd = "tc {}" if tc else "{}"
-        cmd = pre_cmd.format(cmd)
+        cmd = "{} ".format(tool.value) if tool else ""
+        cmd += command
         flog.debug(cmd)
         if output:
             return subprocess.check_output(cmd, shell=True).decode("utf-8").strip()
@@ -29,33 +36,33 @@ class TrafficControl:
 
     def _get_dev(self):
         cmd = "ip route | grep default | awk '{print $5}'"
-        rsp = self.run(cmd, tc=False, output=True)
+        rsp = self.run(cmd, tool=None, output=True)
         flog.debug("dev: {}".format(rsp))
         return rsp
 
     def accept_ports(self, protocol, ports):
         """Accept ports via iptables."""
-        cmd = "iptables -I INPUT -p {protocol} --match multiport --dport {ports} -j ACCEPT"
+        cmd = "-I INPUT -p {protocol} --match multiport --dport {ports} -j ACCEPT"
         ports_list = ",".join(ports)
         cmd = cmd.format(ports=ports_list, protocol=protocol)
-        return self.run(cmd, tc=False)
+        return self.run(cmd, tool=Command.Iptables)
 
     def redirect_ports(self, protocol, src_list, dst):
         """Redirect ports via iptables."""
         cmd = (
-            "iptables -t nat -I PREROUTING -p {protocol} "
+            "-t nat -I PREROUTING -p {protocol} "
             "--match multiport --dport {ports} -j REDIRECT --to-port {dst}"
         )
         ports_list = ",".join(src_list)
         cmd = cmd.format(protocol=protocol, ports=ports_list, dst=dst)
-        return self.run(cmd, tc=False)
+        return self.run(cmd, tool=Command.Iptables)
 
     def show_ip_tables(self):
         """Show ip tables rules."""
         flog.info("IP Table Rules:")
-        flog.info(self.run("iptables -n -L --line-numbers", tc=False, output=True))
+        flog.info(self.run("-n -L --line-numbers", tool=Command.Iptables, output=True))
         flog.info(
-            self.run("iptables -t nat -n -L --line-numbers", tc=False, output=True)
+            self.run("-t nat -n -L --line-numbers", tool=Command.Iptables, output=True)
         )
 
     def add_ip_tables(self):
@@ -82,12 +89,12 @@ class TrafficControl:
     def _create_htb(self):
         """Create htb class."""
         return self.run(
-            cmd="qdisc add dev {dev} root handle 1: htb".format(dev=self.dev)
+            command="qdisc add dev {dev} root handle 1: htb".format(dev=self.dev)
         )
 
     def clear_htb(self):
         """Clear htb class."""
-        self.run(cmd="qdisc del dev {dev} root htb".format(dev=self.dev))
+        self.run(command="qdisc del dev {dev} root htb".format(dev=self.dev))
 
     def _create_htb_class(self, class_id, rate="1000mbit"):
         """Create htb class to hold rules."""
@@ -114,28 +121,42 @@ class TrafficControl:
             "failed to add filter.",
         )
 
-    def _add_packet_rule(self, class_id, packet_delay, packet_loss):
-        """Add packet loss to rule."""
+    def _add_tc_packet_rule(self, class_id, packet_delay, packet_loss):
+        """Add packet loss to rule (tc)."""
         return self.run(
             "qdisc add dev {dev} parent 1:{class_id} netem delay {delay} loss {loss}".format(
                 dev=self.dev, class_id=class_id, delay=packet_delay, loss=packet_loss
             )
         )
 
-    def add_rule(
-        self, class_id, port, packet_delay="0ms", packet_loss="0%", rate="1000mbit"
+    def _add_ip_packet_rule(self, protocol, port, packet_loss):
+        """Add packet loss to rule (ip)."""
+        return self.run(
+            "-t mangle -A INPUT -p {protocol} --dport {port} -m statistic --mode random --probability {loss} -j DROP".format(
+                protocol=protocol, port=port, loss=float(packet_loss.strip("%")) / 100
+            ),
+            tool=Command.Iptables,
+        )
+
+    def add_egress_rule(
+        self, class_id, port, packet_delay="0ms", packet_loss="0%", rate="1000gbit"
     ):
-        """Add rule for packet delay and packet loss."""
+        """Add egress rule for packet delay and packet loss."""
         if not self._create_htb_class(class_id, rate):
             return False
-        if isinstance(port, dict):
-            for p in port.values():
-                if not self._add_port_filter(class_id, p):
-                    return False
-        else:
-            if not self._add_port_filter(class_id, port):
+        for p in port.values():
+            if not self._add_port_filter(class_id, p):
                 return False
-        return self._add_packet_rule(class_id, packet_delay, packet_loss)
+        return self._add_tc_packet_rule(class_id, packet_delay, packet_loss)
+
+    def add_ingress_rule(self, port, packet_loss="0%"):
+        """Add ingress rule for packet loss."""
+        for p in port.values():
+            if not self._add_ip_packet_rule(
+                "tcp", p, packet_loss
+            ) or not self._add_ip_packet_rule("udp", p, packet_loss):
+                return False
+        return True
 
     def show_rules(self):
         """Print rules to console."""
@@ -160,12 +181,15 @@ class TrafficControl:
             )
             for delay, ports in zip(setup["packet_delay"], setup["ports"]):
                 self.index += 1
-                assert self.add_rule(
+                assert self.add_egress_rule(
                     port=ports,
                     class_id=self.index,
                     packet_loss=setup["packet_loss"],
                     packet_delay=delay,
-                ), "Failed to set rule"
+                ), "Failed to set egress rule"
+                assert self.add_ingress_rule(
+                    port=ports, packet_loss=setup["packet_loss"]
+                ), "Failed to set ingress rule"
 
 
 def configure_server_rules(config_file=CONFIG):
