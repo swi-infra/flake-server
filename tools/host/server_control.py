@@ -5,7 +5,6 @@ from enum import Enum
 import file_manager
 import port_publisher
 import traffic_manager
-import pcap_manager
 import flog
 
 
@@ -29,6 +28,7 @@ class Server:
         self.server_root = SERVER_ROOT
         self.server_tools = SERVER_TOOLS
         self.config = os.path.join(self.server_root, "nginx.conf")
+        self.cron_config = {}
 
         self.with_filtering = os.environ.get("FILTER", "1") == "1"
         self.with_services = os.environ.get("SERVICES", "1") == "1"
@@ -57,8 +57,10 @@ class Server:
             flog.info("---- Successfully configured iperf on server ----")
             assert self.start_echo_servers(), "failed to start TCP/UDP Echo servers."
             flog.info("---- Successfully started TCP/UDP Echo servers ----")
-        assert pcap_manager.start_pcap(), "failed to start pcap."
+        assert self.configure_pcap(), "failed to start pcap."
         flog.info("---- Successfully started pcap on server ----")
+        assert self.configure_cron(), "failed to start cron."
+        flog.info("---- Successfully started cron on server ----")
         return True
 
     def add_files(self, force=False):
@@ -87,25 +89,49 @@ class Server:
         return os.system(cmd) == 0
 
     def configure_iperf(self):
-        """Configure iperf cron settings."""
-        flog.debug("configuring cron for iperf")
-        script_path = os.path.join(self.server_tools, "host/iperf3_manager.py")
-        log_file = os.path.join(self.server_root, "logs/iperf_manager.log")
-        env_vars = "PYTHONPATH={} FLAKE_SERVER={} FLAKE_TOOLS={}".format(
+        """Configure iperf settings."""
+        flog.debug("configuring iperf cron settings.")
+        self.cron_config["iperf"] = {
+            "script": os.path.join(self.server_tools, "host/iperf3_manager.py"),
+            "log_file": os.path.join(self.server_root, "logs/iperf_manager.log"),
+        }
+        return True
+
+    def configure_pcap(self):
+        """Configure pcap settings."""
+        flog.debug("configuring pcap_manager cron settings.")
+        self.cron_config["pcap"] = {
+            "script": os.path.join(self.server_tools, "host/pcap_manager.py"),
+            "log_file": os.path.join(self.server_root, "logs/pcap_manager.log"),
+        }
+        return True
+
+    def configure_cron(self):
+        """Configure cron settings."""
+        flog.debug("configuring cron")
+        env_vars = "PYTHONPATH={} FLAKE_SERVER={} FLAKE_TOOLS={} SHELL=/bin/bash".format(
             os.environ.get("PYTHONPATH"),
             os.environ.get("FLAKE_SERVER"),
             os.environ.get("FLAKE_TOOLS"),
         )
-        script = "python3 -u {} > {} 2>&1".format(script_path, log_file)
-        cmd = "{vars} {script}".format(vars=env_vars, script=script)
-        cron_cmd = '(crontab -l ; echo "{cron_time} {cmd}") | crontab -'.format(
-            cron_time="0 */6 * * *", cmd=cmd
-        )
+        for cron_script, info in self.cron_config.items():
+            script = "python3 -u {} > {} 2>&1".format(info["script"], info["log_file"])
+            cmd = "{vars} {script}".format(vars=env_vars, script=script)
+            # Restart script every 3 hours.
+            cron_cmd = '(crontab -l ; echo "{cron_time} {cmd}") | crontab -'.format(
+                cron_time="0 */3 * * *", cmd=cmd
+            )
+            try:
+                # Initial start
+                flog.debug(cmd)
+                assert os.system(cmd) == 0, "Failed to start {}".format(cron_script)
+                # Configure cron
+                flog.debug(cron_cmd)
+                assert os.system(cron_cmd) == 0, "Failed to configure cron"
+            except AssertionError as e:
+                flog.error(e)
+                return False
         try:
-            # Initial start
-            assert os.system(cmd) == 0, "Failed to start iperf3"
-            # Configure cron
-            assert os.system(cron_cmd) == 0, "Failed to configure cron"
             assert os.system("/etc/init.d/cron restart") == 0, "Failed to start cron"
         except AssertionError as e:
             flog.error(e)

@@ -1,3 +1,4 @@
+---
 default_language_version:
   python: python3
 repos:
@@ -11,9 +12,9 @@ repos:
     rev: v1.21.0
     hooks:
       - id: yamllint
+        args: ["-d {extends: relaxed, rules: {line-length: {max: 89}}}"]
   # Docker
   - repo: https://github.com/CoRfr/dockerfile-pre-commit
-    # Use the revision rev you want to point at
     rev: "fd7dca7bc1b4739848e05011899037157b3862e4"
     hooks:
       - id: dockerlint
@@ -31,9 +32,9 @@ repos:
     hooks:
       - id: flake8
         args:
-          - --ignore=E203,E501,W503
+          - --ignore=W503,E501,E203
+          - --max-line-length=89
   - repo: https://github.com/prettier/prettier
-    # Use the sha or tag you want to point at
     rev: "2.0.5"
     hooks:
       - id: prettier

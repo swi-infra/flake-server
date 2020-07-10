@@ -7,14 +7,14 @@ It relies on software to emulate poor network conditions, by introducing delays 
 
 Flake comes with a set of services:
 
-- *HTTP/HTTPS file server*: simple file server that provide files of different types (audio, video, text, ...)
-- *HTTP/HTTPS httpbin.org*: an instance of <https://httpbin.org/> , which is a simple REST service
-- *iperf3*: instances of the famous bandwidth measurement tool
-- *TCP/UDP echo server*: server that sends back to the client any received data
+- _HTTP/HTTPS file server_: simple file server that provide files of different types (audio, video, text, ...)
+- _HTTP/HTTPS httpbin.org_: an instance of <https://httpbin.org/> , which is a simple REST service
+- _iperf3_: instances of the famous bandwidth measurement tool
+- _TCP/UDP echo server_: server that sends back to the client any received data
 
 Each service is exposed over multiple ports, with each port emulating a different condition.
 
-*Example*:
+_Example_:
 
 - https, 0ms delay, 5% packet loss, binary file, 30MB
   <https://flake.legato.io:3006/binary/data_30MB.bin>
@@ -77,7 +77,7 @@ The architecture relies on 3 Docker containers:
 The service includes a JavaScript generator that helps to generate links, but the overall structure is:
 
 | Protocol | Port |
-|----------|------|
+| -------- | ---- |
 | HTTP     | 2xxx |
 | HTTPS    | 3xxx |
 | UDP      | 4xxx |
@@ -85,13 +85,13 @@ The service includes a JavaScript generator that helps to generate links, but th
 | echo     | 6xxx |
 
 | Delay | Port |
-|-------|------|
+| ----- | ---- |
 | 0ms   | x0xx |
 | 100ms | x1xx |
 | 200ms | x2xx |
 
 | Loss  | Port |
-|-------|------|
+| ----- | ---- |
 | 0%    | xx00 |
 | 0.25% | xx01 |
 | 0.5%  | xx02 |
@@ -103,3 +103,15 @@ The service includes a JavaScript generator that helps to generate links, but th
 | 15%   | xx08 |
 | 25%   | xx09 |
 | 50%   | xx10 |
+
+##### Logging
+
+There is logging available at flake.legato.io/logs
+
+- `pcap`: packet capture logs are available in two locations. The `services` container pcaps are in pcap/ and the `filter` container pcaps are available in filter/pcap/.
+  (control script logs at pcap_manager.log and in pcap_listener/ as well as filter/pcap_manager.log and in filter/pcap_listener/)
+- `nginx`: nginx logs can be found at access.log, error.log, http.access.log.
+- `iperf`: iperf logs can be found at iperf3.log.
+  (control script logs at iperf_manager.log)
+- `udp server`: udp server logs can be found at udp_server.log.
+- `echo server`: echo server logs can be found at echo_servers.log.

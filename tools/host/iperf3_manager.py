@@ -48,7 +48,6 @@ class Iperf:
     def start(self):
         """Start iperf."""
         try:
-            os.system("killall iperf3")
             self.run_cmd()
             return True
         except AssertionError as e:

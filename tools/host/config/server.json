@@ -21,7 +21,9 @@
   },
   "pcap": {
     "log": "$FLAKE_SERVER/logs/pcap",
-    "log_size": "100MB"
+    "listener_log": "$FLAKE_SERVER/logs/pcap_listener",
+    "timeout": 30,
+    "log_rotation_length": 50
   },
   "ports": {
     "tcp": {

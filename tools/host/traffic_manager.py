@@ -36,6 +36,7 @@ class TrafficControl:
         return os.system(cmd) == 0
 
     def _get_dev(self):
+        """Get interface device."""
         cmd = "ip route | grep default | awk '{print $5}'"
         rsp = self.run(cmd, tool=None, output=True)
         flog.debug("dev: {}".format(rsp))
@@ -50,10 +51,7 @@ class TrafficControl:
 
     def redirect_ports(self, protocol, src_list, dst):
         """Redirect ports via iptables."""
-        cmd = (
-            "-t nat -I PREROUTING -p {protocol} "
-            "--match multiport --dport {ports}"
-        )
+        cmd = "-t nat -I PREROUTING -p {protocol} " "--match multiport --dport {ports}"
         if "." in dst:
             cmd += " -j DNAT --to-destination {dst}"
         else:
@@ -94,7 +92,10 @@ class TrafficControl:
             filter_host = socket.gethostbyname(hostname)
             assert host, "Unable to get host from hostname %s" % hostname
             flog.debug("Redirect connections to host %s to %s" % (filter_host, host))
-            self.run("-t nat -A POSTROUTING -o eth0 -j SNAT --to-source %s" % filter_host, tool=Command.Iptables)
+            self.run(
+                "-t nat -A POSTROUTING -o eth0 -j SNAT --to-source %s" % filter_host,
+                tool=Command.Iptables,
+            )
         for protocol, protocol_set in self.server_config["ports"].items():
             for default_port, port_set in protocol_set.items():
                 if default_port != "null":
