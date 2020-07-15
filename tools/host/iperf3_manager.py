@@ -39,7 +39,7 @@ class Iperf:
 
     def run_cmd(self):
         """Run iperf command."""
-        iperf_cmd = "iperf3 -s -p {port} --logfile {log_file} -D"
+        iperf_cmd = "LD_LIBRARY_PATH=/usr/local/lib iperf3 -s -p {port} --logfile {log_file} -D"
         for port in self.ports:
             cmd = iperf_cmd.format(port=port, log_file=self.log_file)
             flog.debug(cmd)
