@@ -11,7 +11,7 @@ RUN apt-get update && \
     libsm6 \
     libxext6 \
     libxrender-dev \
-    git \
+    iperf3 \
     tcpdump \
     cron \
     python3-dev \
@@ -20,9 +20,6 @@ RUN apt-get update && \
     python3-pip && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-# Download custom iperf3
-RUN git clone https://github.com/legatoproject/legato-3rdParty-iperf.git --branch master-swi
 
 # Add init script
 ADD docker/10-flake-env.sh /docker-entrypoint.d/
