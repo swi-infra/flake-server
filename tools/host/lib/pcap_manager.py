@@ -22,12 +22,14 @@ class Pcap:
 
     def get_ports(self):
         "Return list of ports used."
-        ports = {"tcp": [], "udp": []}
+        ports = {"tcp": [], "udp": [], "iperf": []}
         for loss_set in self.config.values():
             for port_list in loss_set["ports"]:
                 for scheme, port in port_list.items():
                     if scheme == "udp":
                         ports["udp"].append(port)
+                    elif scheme == "iperf":
+                        ports["iperf"].append(port)
                     else:
                         ports["tcp"].append(port)
         return ports
@@ -39,20 +41,25 @@ class Pcap:
 
     def configure_pcap(self):
         """Configure pcap command."""
-        pcap_cmd = "tcpdump {scheme} port {port} -W 1 -C {size} -w {log} &"
+        pcap_cmd = "tcpdump {scheme} port {port} -W 1 -C {size} -w {log}"
         for scheme, ports in self.ports.items():
             for port in ports:
                 log_path = os.path.join(self.log_dir, "pcap_{}.pcap".format(port))
+                headers_only = scheme == "iperf"
                 if scheme in ("udp", "iperf"):
                     cmd = pcap_cmd.format(
                         scheme="udp", port=port, size=self.log_size, log=log_path
                     )
-                    self.run_cmd(cmd)
+                    if headers_only:
+                        cmd += " -s 96"
+                    self.run_cmd(cmd + " &")
                 if scheme != "udp":
                     cmd = pcap_cmd.format(
                         scheme="", port=port, size=self.log_size, log=log_path
                     )
-                    self.run_cmd(cmd)
+                    if headers_only:
+                        cmd += " -s 96"
+                    self.run_cmd(cmd + " &")
 
     def start(self):
         """Start pcap."""
