@@ -11,7 +11,7 @@ RUN apt-get update && \
     libsm6 \
     libxext6 \
     libxrender-dev \
-    iperf3 \
+    git \
     tcpdump \
     cron \
     python3-dev \
@@ -26,7 +26,12 @@ ADD docker/10-flake-env.sh /docker-entrypoint.d/
 
 # Add tools
 ADD tools /tools/
+
+# Install python dependencies
 RUN python3 -m pip install --no-cache-dir -r /tools/host/requirements.txt
+
+# Install custom iperf3
+RUN /tools/bin/get_iperf3.sh
 
 # Add nginx conf * public
 ADD nginx/conf/nginx.conf /etc/nginx/
