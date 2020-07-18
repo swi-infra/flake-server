@@ -30,8 +30,8 @@ class Server:
         self.server_tools = SERVER_TOOLS
         self.config = os.path.join(self.server_root, "nginx.conf")
 
-        self.with_filtering = (os.environ.get("FILTER", "1") == "1")
-        self.with_services = (os.environ.get("SERVICES", "1") == "1")
+        self.with_filtering = os.environ.get("FILTER", "1") == "1"
+        self.with_services = os.environ.get("SERVICES", "1") == "1"
 
     def test_config(self):
         """Test nginx config file."""
@@ -46,8 +46,8 @@ class Server:
             flog.info("---- Successfully added files ----")
             assert port_publisher.publish_ports(), "Failed to publish ports."
             flog.info("---- Successfully published ports ----")
-        assert (
-            traffic_manager.configure_server_rules(with_filtering=self.with_filtering, with_services=self.with_services)
+        assert traffic_manager.configure_server_rules(
+            with_filtering=self.with_filtering, with_services=self.with_services
         ), "failed to configure traffic rules."
         flog.info("---- Successfully configured traffic rules ----")
         if self.with_services:
@@ -55,6 +55,8 @@ class Server:
             flog.info("---- Successfully started UDP server ----")
             assert self.configure_iperf(), "failed to configure iperf server."
             flog.info("---- Successfully configured iperf on server ----")
+            assert self.start_echo_servers(), "failed to start TCP/UDP Echo servers."
+            flog.info("---- Successfully started TCP/UDP Echo servers ----")
         assert pcap_manager.start_pcap(), "failed to start pcap."
         flog.info("---- Successfully started pcap on server ----")
         return True
@@ -74,6 +76,14 @@ class Server:
         log_file = os.path.join(self.server_root, "logs/udp_server.log")
         cmd = "python3 -u {} > {} 2>&1 &".format(script_path, log_file)
         flog.debug("Starting udp server with: {}".format(cmd))
+        return os.system(cmd) == 0
+
+    def start_echo_servers(self):
+        """Start tcp/udp echo servers as background process."""
+        script_path = os.path.join(self.server_tools, "host/echo_servers.py")
+        log_file = os.path.join(self.server_root, "logs/echo_servers.log")
+        cmd = "python3 -u {} > {} 2>&1 &".format(script_path, log_file)
+        flog.debug("Starting udp/tcp echo server with: {}".format(cmd))
         return os.system(cmd) == 0
 
     def configure_iperf(self):
@@ -125,7 +135,10 @@ def main():
 
     args = parser.parse_args()
     server_manager = Server()
-    flog.info("Server: filtering[%s] services[%s]" % (server_manager.with_filtering, server_manager.with_services))
+    flog.info(
+        "Server: filtering[%s] services[%s]"
+        % (server_manager.with_filtering, server_manager.with_services)
+    )
     return server_manager.run_action(action=args.action, force=args.force)
 
 

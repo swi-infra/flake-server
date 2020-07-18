@@ -1,4 +1,4 @@
-FROM nginx:latest
+FROM nginx:1.19.1
 
 # Add dependencies
 RUN apt-get update && \
@@ -22,22 +22,22 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Add init script
-ADD docker/10-flake-env.sh /docker-entrypoint.d/
+COPY docker/10-flake-env.sh /docker-entrypoint.d/
 
 # Install python dependencies
-ADD tools/host/requirements.txt /tools/host/requirements.txt
+COPY tools/host/requirements.txt /tools/host/requirements.txt
 RUN python3 -m pip install --no-cache-dir -r /tools/host/requirements.txt
 
 # Install custom iperf3
-ADD tools/bin/get_iperf3.sh /tools/bin/get_iperf3.sh
+COPY tools/bin/get_iperf3.sh /tools/bin/get_iperf3.sh
 RUN /tools/bin/get_iperf3.sh
 
 # Add tools
-ADD tools /tools/
+COPY tools /tools/
 
 # Add nginx conf * public
-ADD nginx/conf/nginx.conf /etc/nginx/
-ADD nginx/public/ /usr/share/nginx/public
+COPY nginx/conf/nginx.conf /etc/nginx/
+COPY nginx/public/ /usr/share/nginx/public
 RUN mkdir -p /usr/share/nginx/logs
 
 EXPOSE 80/tcp \
@@ -56,4 +56,10 @@ EXPOSE 80/tcp \
        5200-5249/tcp \
        5000-5049/udp \
        5100-5149/udp \
-       5200-5249/udp
+       5200-5249/udp \
+       6000-6049/tcp \
+       6100-6149/tcp \
+       6200-6249/tcp \
+       6000-6049/udp \
+       6100-6149/udp \
+       6200-6249/udp
