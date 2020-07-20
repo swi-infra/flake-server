@@ -30,6 +30,9 @@ class Server:
         self.server_tools = SERVER_TOOLS
         self.config = os.path.join(self.server_root, "nginx.conf")
 
+        self.with_filtering = (os.environ.get("FILTER", "1") == "1")
+        self.with_services = (os.environ.get("SERVICES", "1") == "1")
+
     def test_config(self):
         """Test nginx config file."""
         cmd = "nginx -t -c {}".format(self.config)
@@ -37,19 +40,21 @@ class Server:
 
     def configure(self, force=False):
         """Configure server at startup."""
-        flog.info("---- Configuring Flake ----")
-        assert self.add_files(force), "Failed to add files."
-        flog.info("---- Successfully added files ----")
-        assert port_publisher.publish_ports(), "Failed to publish ports."
-        flog.info("---- Successfully published ports ----")
+        if self.with_services:
+            flog.info("---- Configuring Flake ----")
+            assert self.add_files(force), "Failed to add files."
+            flog.info("---- Successfully added files ----")
+            assert port_publisher.publish_ports(), "Failed to publish ports."
+            flog.info("---- Successfully published ports ----")
         assert (
-            traffic_manager.configure_server_rules()
+            traffic_manager.configure_server_rules(with_filtering=self.with_filtering, with_services=self.with_services)
         ), "failed to configure traffic rules."
         flog.info("---- Successfully configured traffic rules ----")
-        assert self.start_udp_server(), "failed to start UDP server."
-        flog.info("---- Successfully started UDP server ----")
-        assert self.configure_iperf(), "failed to configure iperf server."
-        flog.info("---- Successfully configured iperf on server ----")
+        if self.with_services:
+            assert self.start_udp_server(), "failed to start UDP server."
+            flog.info("---- Successfully started UDP server ----")
+            assert self.configure_iperf(), "failed to configure iperf server."
+            flog.info("---- Successfully configured iperf on server ----")
         assert pcap_manager.start_pcap(), "failed to start pcap."
         flog.info("---- Successfully started pcap on server ----")
         return True
@@ -59,8 +64,8 @@ class Server:
         try:
             file_manager.configure_files(force)
             return True
-        except Exception as e:
-            flog.error(e)
+        except Exception as ex:
+            flog.error(ex)
             return False
 
     def start_udp_server(self):
@@ -120,6 +125,7 @@ def main():
 
     args = parser.parse_args()
     server_manager = Server()
+    flog.info("Server: filtering[%s] services[%s]" % (server_manager.with_filtering, server_manager.with_services))
     return server_manager.run_action(action=args.action, force=args.force)
 
 

@@ -1,12 +1,11 @@
 version: "3"
 
 services:
-  web:
+  filter:
     build: .
     image: $USER/nginx-xtra
     privileged: true
-    depends_on:
-      - httpbin
+    command: "bash -c '/docker-entrypoint.d/10-flake-env.sh && tail -f /dev/null'"
     ports:
       - "80:80"
       - "443:443"
@@ -25,9 +24,29 @@ services:
       - "5000-5049:5000-5049/udp"
       - "5100-5149:5100-5149/udp"
       - "5200-5249:5200-5249/udp"
+    environment:
+      - FILTER=1
+      - SERVICES=0
     volumes:
+      - "./nginx/logs/filter:/usr/share/nginx/logs"
+    depends_on:
+      - server
       - "./nginx/logs:/usr/share/nginx/logs"
       - "./certs/conf:/etc/letsencrypt:ro"
 
   httpbin:
     image: kennethreitz/httpbin
+      - "./nginx/logs:/usr/share/nginx/logs"
+
+  server:
+    image: $USER/nginx-xtra
+    privileged: true
+    depends_on:
+      - httpbin
+    environment:
+      - FILTER=0
+      - SERVICES=1
+    volumes:
+      - "./nginx/logs:/usr/share/nginx/logs"
+      - "./nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "/usr/share/nginx/public/files"

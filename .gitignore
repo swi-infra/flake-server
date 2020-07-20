@@ -24,3 +24,4 @@ __pycache__
 
 # Nginx
 nginx/logs/*
+certs/

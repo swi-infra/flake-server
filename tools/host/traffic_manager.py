@@ -1,6 +1,7 @@
 """Traffic control module to configure tc rules on server."""
 import os
 import subprocess
+import socket
 from enum import Enum
 import flog
 from config_handler import ConfigHandler
@@ -51,8 +52,12 @@ class TrafficControl:
         """Redirect ports via iptables."""
         cmd = (
             "-t nat -I PREROUTING -p {protocol} "
-            "--match multiport --dport {ports} -j REDIRECT --to-port {dst}"
+            "--match multiport --dport {ports}"
         )
+        if "." in dst:
+            cmd += " -j DNAT --to-destination {dst}"
+        else:
+            cmd += " -j REDIRECT --to-port {dst}"
         ports_list = ",".join(src_list)
         cmd = cmd.format(protocol=protocol, ports=ports_list, dst=dst)
         return self.run(cmd, tool=Command.Iptables)
@@ -65,20 +70,39 @@ class TrafficControl:
             self.run("-t nat -n -L --line-numbers", tool=Command.Iptables, output=True)
         )
 
-    def add_ip_tables(self):
+    def port_range_to_ports(self, port_set):
+        ports = [port_set]
+        if ":" in port_set:
+            ports = []
+            port = int(port_set.split(":")[0])
+            max_port = int(port_set.split(":")[1])
+            while port < max_port:
+                ports.append("%s" % port)
+                port += 1
+        return ports
+
+    def add_ip_tables(self, host=None):
         """Add ip table rules.
 
         Accepts incoming traffic on ports.
         Redirects traffic on simulation ports to default ports.
         Configuration specified in server config.
         """
-        flog.info("Accepting and redirecting ports")
+        flog.info("Accepting and redirecting ports (host=%s)" % host)
+        if host:
+            hostname = os.environ.get("FILTER_HOST", "filter")
+            filter_host = socket.gethostbyname(hostname)
+            assert host, "Unable to get host from hostname %s" % hostname
+            flog.debug("Redirect connections to host %s to %s" % (filter_host, host))
+            self.run("-t nat -A POSTROUTING -o eth0 -j SNAT --to-source %s" % filter_host, tool=Command.Iptables)
         for protocol, protocol_set in self.server_config["ports"].items():
             for default_port, port_set in protocol_set.items():
                 if default_port != "null":
                     port_set.append(default_port)
                 if not self.accept_ports(protocol=protocol, ports=port_set):
                     return False
+                if host:
+                    default_port = host
                 if default_port != "null" and not self.redirect_ports(
                     protocol=protocol, src_list=port_set, dst=default_port
                 ):
@@ -132,7 +156,7 @@ class TrafficControl:
     def _add_ip_packet_rule(self, protocol, port, packet_loss):
         """Add packet loss to rule (ip)."""
         return self.run(
-            "-t mangle -A INPUT -p {protocol} --dport {port} -m statistic --mode random --probability {loss} -j DROP".format(
+            "-t mangle -A PREROUTING -p {protocol} --dport {port} -m statistic --mode random --probability {loss} -j DROP".format(
                 protocol=protocol, port=port, loss=float(packet_loss.strip("%")) / 100
             ),
             tool=Command.Iptables,
@@ -164,9 +188,18 @@ class TrafficControl:
         flog.info(self.run("qdisc show dev {dev}".format(dev=self.dev), output=True))
         return True
 
-    def configure(self):
+    def configure(self, with_filtering=True, with_services=True):
         """Configure server based on config rules."""
-        assert self.add_ip_tables(), "Failed to add to ip tables"
+        host = None
+        if not with_services:
+            hostname = os.environ.get("SERVICES_HOST", "server")
+            host = socket.gethostbyname(hostname)
+            assert host, "Unable to get host from hostname %s" % hostname
+        assert self.add_ip_tables(host), "Failed to add to ip tables"
+
+        if not with_filtering:
+            return
+
         # Reset current rules
         self.clear_htb()
         assert self._create_htb(), "Failed to create htb"
@@ -192,16 +225,16 @@ class TrafficControl:
                 ), "Failed to set ingress rule"
 
 
-def configure_server_rules(config_file=CONFIG):
+def configure_server_rules(config_file=CONFIG, with_filtering=True, with_services=True):
     """Configure server rules."""
     config = ConfigHandler(config_file)
     try:
         tc_manager = TrafficControl(config)
-        tc_manager.configure()
+        tc_manager.configure(with_filtering=with_filtering, with_services=with_services)
         tc_manager.show_rules()
         return True
-    except AssertionError as e:
-        flog.error(e)
+    except AssertionError as ex:
+        flog.error(ex)
         return False
 
 

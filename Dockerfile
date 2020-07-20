@@ -24,14 +24,16 @@ RUN apt-get update && \
 # Add init script
 ADD docker/10-flake-env.sh /docker-entrypoint.d/
 
-# Add tools
-ADD tools /tools/
-
 # Install python dependencies
+ADD tools/host/requirements.txt /tools/host/requirements.txt
 RUN python3 -m pip install --no-cache-dir -r /tools/host/requirements.txt
 
 # Install custom iperf3
+ADD tools/bin/get_iperf3.sh /tools/bin/get_iperf3.sh
 RUN /tools/bin/get_iperf3.sh
+
+# Add tools
+ADD tools /tools/
 
 # Add nginx conf * public
 ADD nginx/conf/nginx.conf /etc/nginx/

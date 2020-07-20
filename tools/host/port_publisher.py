@@ -39,8 +39,8 @@ class PortConfiguration:
     def publish(self):
         """Publish ports to file."""
         try:
-            with open(self.port_config, "w") as f:
-                json.dump(self.ports, f, indent=2)
+            with open(self.port_config, "w") as fd:
+                json.dump(self.ports, fd, indent=2)
             return True
         except Exception:
             return False
