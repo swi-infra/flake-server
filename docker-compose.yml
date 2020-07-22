@@ -29,14 +29,12 @@ services:
       - SERVICES=0
     volumes:
       - "./nginx/logs/filter:/usr/share/nginx/logs"
+      - "./certs/conf:/etc/letsencrypt:ro"
     depends_on:
       - server
-      - "./nginx/logs:/usr/share/nginx/logs"
-      - "./certs/conf:/etc/letsencrypt:ro"
 
   httpbin:
     image: kennethreitz/httpbin
-      - "./nginx/logs:/usr/share/nginx/logs"
 
   server:
     image: $USER/nginx-xtra
