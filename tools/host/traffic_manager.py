@@ -214,15 +214,26 @@ class TrafficControl:
             )
             for delay, ports in zip(setup["packet_delay"], setup["ports"]):
                 self.index += 1
+
+                if not with_services:
+                    # If the services are remote, the delay is also applied when
+                    # we forward the packet, so we need to divide it in half.
+                    delay = "%fms" % (float(delay.strip("ms")) / 2)
+
                 assert self.add_egress_rule(
                     port=ports,
                     class_id=self.index,
                     packet_loss=setup["packet_loss"],
                     packet_delay=delay,
                 ), "Failed to set egress rule"
-                assert self.add_ingress_rule(
-                    port=ports, packet_loss=setup["packet_loss"]
-                ), "Failed to set ingress rule"
+
+                # If the services are 'local', we also need to add an ingress rule.
+                # With the services are remote, egress rule also applies to ingress traffic
+                # when it gets forwarded to remote port.
+                if with_services:
+                    assert self.add_ingress_rule(
+                        port=ports, packet_loss=setup["packet_loss"]
+                    ), "Failed to set ingress rule"
 
 
 def configure_server_rules(config_file=CONFIG, with_filtering=True, with_services=True):
