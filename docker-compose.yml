@@ -29,7 +29,6 @@ services:
       - SERVICES=0
     volumes:
       - "./nginx/logs/filter:/usr/share/nginx/logs"
-      - "./certs/conf:/etc/letsencrypt:ro"
     depends_on:
       - server
 
@@ -48,3 +47,4 @@ services:
       - "./nginx/logs:/usr/share/nginx/logs"
       - "./nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro"
       - "/usr/share/nginx/public/files"
+      - "./certs/conf:/etc/letsencrypt:ro"
