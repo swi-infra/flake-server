@@ -11,10 +11,19 @@ def tcp_handle(Client_SOCK, address, buffer):
     flog.info("Launch TCP Handler.")
     while True:
         Client_SOCK.settimeout(TIMEOUT)
-        data = Client_SOCK.recv(buffer)
-        if data:
-            Client_SOCK.send(data)
-        if not data:
+        try:
+            data = Client_SOCK.recv(buffer)
+            if data:
+                Client_SOCK.send(data)
+            if not data:
+                Client_SOCK.close()
+                break
+        except socket.timeout:
+            flog.info("TCP Handler Timed Out. Closing Socket.")
+            Client_SOCK.close()
+            break
+        except Exception as ex:
+            flog.warning("TCP Handler Exception: {}".format(ex))
             Client_SOCK.close()
             break
     flog.info("End TCP Handler")
