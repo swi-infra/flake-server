@@ -1,3 +1,6 @@
+import datetime
+
+
 colour = {
     "info": "\033[92m{}\033[0m",
     "debug": "\033[95m{}\033[0m",
@@ -6,10 +9,17 @@ colour = {
 }
 
 
+def get_time():
+    """Get formatted current time."""
+    time = datetime.datetime.now()
+    return time.strftime("[%H:%M:%S]")
+
+
 def print_log(style, message):
     """Print in log format."""
-    message = "{style}: {message}".format(style=style.upper(), message=message)
-    print(colour[style].format(message))
+    message = "{style}: {msg}".format(style=style.upper(), msg=message)
+    message = colour[style].format(message)
+    print("{time} {msg}".format(time=get_time(), msg=message))
 
 
 def info(message):

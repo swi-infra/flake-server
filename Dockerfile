@@ -1,5 +1,8 @@
 FROM nginx:1.19.1
 
+# Set timezone
+ENV TZ=Canada/Pacific
+
 # Add dependencies
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
@@ -14,6 +17,7 @@ RUN apt-get update && \
     git \
     tcpdump \
     cron \
+    procps \
     python3-dev \
     python3-setuptools \
     ffmpeg \
