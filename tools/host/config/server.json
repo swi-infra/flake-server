@@ -14,7 +14,7 @@
   },
   "tcp_udp": {
     "port": "6000",
-    "buffer": "1024"
+    "timeout": "120"
   },
   "iperf": {
     "log": "$FLAKE_SERVER/logs/iperf3.log"

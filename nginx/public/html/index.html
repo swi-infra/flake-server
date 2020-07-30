@@ -70,6 +70,8 @@
           <option value="http">http</option>
           <option value="https">https</option>
           <option value="udp">udp</option>
+          <option value="iperf3">iperf3</option>
+          <option value="tcp/udp echo">tcp/udp echo</option>
         </select>
       </div>
 
@@ -144,12 +146,14 @@
     </div>
     <script>
       function urlBuilder() {
-        let port = 2000;
+        let port = 0;
         let url = "";
         let schemePort = {
-          http: 0,
-          https: 1000,
-          udp: 2000,
+          http: 2000,
+          https: 3000,
+          udp: 4000,
+          iperf3: 5000,
+          "tcp/udp echo": 6000,
         };
         let fileExtension = {
           text: ".txt",
@@ -161,7 +165,7 @@
 
         // get scheme
         let scheme = document.getElementById("Scheme").value;
-        if (scheme === "udp") {
+        if (["udp", "iperf3", "tcp/udp echo"].includes(scheme)) {
           url += "http";
         } else {
           url += scheme;
@@ -173,17 +177,18 @@
         port += parseInt(document.getElementById("PacketDelay").value);
         port += parseInt(document.getElementById("PacketLoss").value);
         url += port;
+        if (!["iperf3", "tcp/udp echo"].includes(scheme)) {
+          url += "/";
 
-        url += "/";
+          url += document.getElementById("FileType").value;
+          let fileType = document.getElementById("FileType").value;
 
-        url += document.getElementById("FileType").value;
-        let fileType = document.getElementById("FileType").value;
+          url += "/data_";
 
-        url += "/data_";
+          url += document.getElementById("FileSize").value;
 
-        url += document.getElementById("FileSize").value;
-
-        url += fileExtension[fileType];
+          url += fileExtension[fileType];
+        }
 
         document.getElementById("url").value = url;
       }

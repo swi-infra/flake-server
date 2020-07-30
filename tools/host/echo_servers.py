@@ -1,30 +1,33 @@
+"""TCP / UDP echo server."""
+import _thread
 from socket import socket, AF_INET, SOCK_DGRAM, SOCK_STREAM
 import flog
-import _thread
 from config_handler import ServerConfig
 
-TIMEOUT = 120
+
+max_buffer = 65535
 
 
-def tcp_handle(Client_SOCK, address, buffer):
+def tcp_handle(client_sock, address, timeout):
     """Echo data over TCP socket."""
     flog.info("Launch TCP Handler.")
     while True:
-        Client_SOCK.settimeout(TIMEOUT)
+        client_sock.settimeout(timeout)
         try:
-            data = Client_SOCK.recv(buffer)
+            data = client_sock.recv(max_buffer)
             if data:
-                Client_SOCK.send(data)
+                flog.debug("Received TCP data")
+                client_sock.send(data)
             if not data:
-                Client_SOCK.close()
+                client_sock.close()
                 break
         except socket.timeout:
             flog.info("TCP Handler Timed Out. Closing Socket.")
-            Client_SOCK.close()
+            client_sock.close()
             break
         except Exception as ex:
             flog.warning("TCP Handler Exception: {}".format(ex))
-            Client_SOCK.close()
+            client_sock.close()
             break
     flog.info("End TCP Handler")
 
@@ -36,7 +39,7 @@ class EchoServer:
         """Initialize echo servers."""
         self.config = config
         self.port = int(self.config["tcp_udp"]["port"])
-        self.buffer = int(self.config["tcp_udp"]["buffer"])
+        self.timeout = int(self.config["tcp_udp"]["timeout"])
         self.local_ip = "0.0.0.0"
         self.tcp_server = socket(AF_INET, SOCK_STREAM)
         self.udp_server = socket(AF_INET, SOCK_DGRAM)
@@ -45,9 +48,9 @@ class EchoServer:
         """Echo data over UDP socket."""
         flog.info("Launch UDP Handler.")
         while True:
-            data, addr = self.udp_server.recvfrom(self.buffer)
+            data, addr = self.udp_server.recvfrom(max_buffer)
             if data:
-                flog.debug("Received UDP: {}".format(data))
+                flog.debug("Received UDP data")
                 self.udp_server.sendto(data, addr)
             if not data:
                 self.udp_server.close()
@@ -65,8 +68,8 @@ class EchoServer:
 
         # listen for TCP
         while True:
-            Client_SOCK, addr = self.tcp_server.accept()
-            _thread.start_new_thread(tcp_handle, (Client_SOCK, addr, self.buffer))
+            client_sock, addr = self.tcp_server.accept()
+            _thread.start_new_thread(tcp_handle, (client_sock, addr, self.timeout))
 
 
 def run_echo_server():
