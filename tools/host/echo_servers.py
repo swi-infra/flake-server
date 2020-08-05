@@ -21,6 +21,10 @@ def tcp_handle(client_sock, address, timeout):
             if not data:
                 client_sock.close()
                 break
+        except ConnectionResetError:
+            flog.info("TCP Client Disconnected.")
+            client_sock.close()
+            break
         except socket.timeout:
             flog.info("TCP Handler Timed Out. Closing Socket.")
             client_sock.close()
