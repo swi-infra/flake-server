@@ -82,15 +82,10 @@ class PcapHandler:
         for loss_set in self.config.values():
             for port_list in loss_set["ports"]:
                 for scheme, port in port_list.items():
-                    if scheme == "udp":
-                        port_data["udp"][port] = {"headers_only": False}
-                    elif scheme == "iperf":
+                    if scheme == "iperf":
                         port_data["udp"][port] = {"headers_only": True}
                         port_data["tcp"][port] = {"headers_only": True}
-                    elif scheme == "tcp_udp":
-                        port_data["udp"][port] = {"headers_only": False}
-                        port_data["tcp"][port] = {"headers_only": False}
-                    else:
+                    elif scheme in ("http", "https"):
                         port_data["tcp"][port] = {"headers_only": False}
         return port_data
 
