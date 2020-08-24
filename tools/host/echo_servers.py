@@ -8,11 +8,10 @@ from config_handler import ServerConfig
 max_buffer = 65535
 
 
-def tcp_handle(client_sock, address, timeout):
+def tcp_handle(client_sock, address):
     """Echo data over TCP socket."""
     flog.info("Launch TCP Handler.")
     while True:
-        client_sock.settimeout(timeout)
         try:
             data = client_sock.recv(max_buffer)
             if data:
@@ -25,12 +24,14 @@ def tcp_handle(client_sock, address, timeout):
             flog.info("TCP Client Disconnected.")
             client_sock.close()
             break
-        except socket.timeout:
+        except socket.timeout as err:
             flog.info("TCP Handler Timed Out. Closing Socket.")
+            flog.info(err)
             client_sock.close()
             break
         except Exception as ex:
             flog.warning("TCP Handler Exception: {}".format(ex))
+            flog.info(ex)
             client_sock.close()
             break
     flog.info("End TCP Handler")
@@ -73,7 +74,8 @@ class EchoServer:
         # listen for TCP
         while True:
             client_sock, addr = self.tcp_server.accept()
-            _thread.start_new_thread(tcp_handle, (client_sock, addr, self.timeout))
+            client_sock.settimeout(self.timeout)
+            _thread.start_new_thread(tcp_handle, (client_sock, addr))
 
 
 def run_echo_server():

@@ -46,14 +46,12 @@ class Config(dict):
 
 class ServerConfig(Config):
     """Server configuration handler."""
-
     def __init__(self, config=DEFAULT_CONFIG):
         super(ServerConfig, self).__init__(config)
 
 
 class ConfigHandler(Config):
     """Specific configuration file handler."""
-
     def __init__(self, config, server_config=DEFAULT_CONFIG):
         self.server = ServerConfig(server_config)
         super(ConfigHandler, self).__init__(config)

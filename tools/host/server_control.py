@@ -57,6 +57,8 @@ class Server:
             flog.info("---- Successfully configured iperf on server ----")
             assert self.start_echo_servers(), "failed to start TCP/UDP Echo servers."
             flog.info("---- Successfully started TCP/UDP Echo servers ----")
+            assert self.start_tcp_tls_server(), "failed to start TCP TLS server."
+            flog.info("---- Successfully started TCP TLS Echo server  ----")
         assert self.configure_pcap(), "failed to start pcap."
         flog.info("---- Successfully started pcap on server ----")
         assert self.configure_cron(), "failed to start cron."
@@ -86,6 +88,14 @@ class Server:
         log_file = os.path.join(self.server_root, "logs/echo_servers.log")
         cmd = "python3 -u {} > {} 2>&1 &".format(script_path, log_file)
         flog.debug("Starting udp/tcp echo server with: {}".format(cmd))
+        return os.system(cmd) == 0
+
+    def start_tcp_tls_server(self):
+        """Start tcp tls echo server as background process."""
+        script_path = os.path.join(self.server_tools, "host/tcp_tls_server.py")
+        log_file = os.path.join(self.server_root, "logs/tcp_tls_server.log")
+        cmd = "python3 -u {} > {} 2>&1 &".format(script_path, log_file)
+        flog.debug("Starting tcp tls echo server with: {}".format(cmd))
         return os.system(cmd) == 0
 
     def configure_iperf(self):
