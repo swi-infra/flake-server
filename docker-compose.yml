@@ -6,7 +6,8 @@ services:
     build: .
     image: $USER/nginx-xtra
     privileged: true
-    command: "bash -c '/docker-entrypoint.d/10-flake-env.sh && tail -f /dev/null'"
+    #command: "bash -c '/docker-entrypoint.d/10-flake-env.sh && tail -f /dev/null'"
+    container_name: flake-filter
     ports:
       - "80:80"
       - "443:443"
@@ -34,17 +35,28 @@ services:
     environment:
       - FILTER=1
       - SERVICES=0
+      - SERVICES_HOST=flake-services
     volumes:
       - "./nginx/logs/filter:/usr/share/nginx/logs"
+      - "./nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "./certs/conf:/etc/letsencrypt:ro"
     depends_on:
       - server
+    networks:
+      - nginx-proxy
 
   httpbin:
     image: kennethreitz/httpbin
+    container_name: httpbin
+    networks:
+      - nginx-proxy
+    expose:
+      - "80"
 
   server:
     image: $USER/nginx-xtra
     privileged: true
+    container_name: flake-services
     depends_on:
       - httpbin
     environment:
@@ -55,3 +67,7 @@ services:
       - "./nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro"
       - "/usr/share/nginx/public/files"
       - "./certs/conf:/etc/letsencrypt:ro"
+    networks:
+      - nginx-proxy
+networks:
+  nginx-proxy:
