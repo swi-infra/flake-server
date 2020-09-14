@@ -1,6 +1,5 @@
 import flog
-import _thread
-import os
+import threading
 import ssl
 from socket import socket, AF_INET, SOCK_STREAM
 from config_handler import ServerConfig
@@ -42,21 +41,31 @@ def tcp_tls_handle(conn_stream, client_sock):
 class TcpTLSServer:
     """TCP TLS server class."""
 
-    def __init__(self, config):
+    def __init__(self, config, mutual=False):
         """Initialize tcp server."""
         self.config = config
-        self.port = int(self.config["tcp_tls"]["port"])
         self.timeout = int(self.config["tcp_tls"]["timeout"])
         self.local_ip = "0.0.0.0"
         self.tcp_server = socket(AF_INET, SOCK_STREAM)
         self.fullchain = self.config["tcp_tls"]["fullchain"]
         self.privkey = self.config["tcp_tls"]["privkey"]
+        self.is_mutual = mutual
+        if self.is_mutual is False:
+            self.port = int(self.config["tcp_tls"]["port"])
+        else:
+            self.port = int(self.config["tcp_tls_mutual"]["port"])
+            self.CAroot = self.config["tcp_tls_mutual"]["CAroot"]
 
     def run(self):
         """Run TCP TLS server."""
-        TLS_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+        TLS_context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
         flog.debug("Loading cert and keyfile")
         TLS_context.load_cert_chain(certfile=self.fullchain, keyfile=self.privkey)
+        if self.is_mutual is True:
+            flog.debug("Setting server to mutual authentication.")
+            # CA root used for verifying Client certificates
+            TLS_context.load_verify_locations(cafile=self.CAroot)
+            TLS_context.verify_mode = ssl.CERT_REQUIRED
 
         self.tcp_server.bind((self.local_ip, self.port))
         self.tcp_server.listen(5)
@@ -70,7 +79,10 @@ class TcpTLSServer:
             flog.info("TCP Socket Connected.")
             try:
                 conn_stream = TLS_context.wrap_socket(client_sock, server_side=True)
-                _thread.start_new_thread(tcp_tls_handle, (conn_stream, client_sock))
+                TLS_thread = threading.Thread(
+                    target=tcp_tls_handle, args=(conn_stream, client_sock)
+                )
+                TLS_thread.start()
             except Exception as ex:
                 flog.info("Could not wrap socket. Closing TCP Socket.")
                 flog.info(ex)
@@ -82,7 +94,17 @@ def run_tcp_tls_server():
     flog.info("Starting TCP TLS echo server")
     config = ServerConfig()
     tcp_TLS_server = TcpTLSServer(config)
-    tcp_TLS_server.run()
+    tcp_TLS_server_mutual = TcpTLSServer(config, mutual=True)
+
+    flog.debug("Launch mutual authentication server thread.")
+    mutual_thread = threading.Thread(target=tcp_TLS_server_mutual.run, args=())
+    mutual_thread.start()
+    flog.debug("Launch server authentication server thread.")
+    server_thread = threading.Thread(target=tcp_TLS_server.run, args=())
+    server_thread.start()
+    mutual_thread.join()
+    server_thread.join()
+
 
 if __name__ == "__main__":
     run_tcp_tls_server()

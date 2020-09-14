@@ -22,6 +22,10 @@
     "fullchain": "/etc/letsencrypt/live/flake.legato.io/fullchain.pem",
     "privkey": "/etc/letsencrypt/live/flake.legato.io/privkey.pem"
   },
+  "tcp_tls_mutual": {
+    "port": "6250",
+    "CAroot": "/tools/host/resources/Client_Auth_Certs/ca-chain.cert.pem"
+  },
   "iperf": {
     "log": "$FLAKE_SERVER/logs/iperf3.log"
   },
@@ -37,7 +41,8 @@
       "443": ["3000:3049", "3100:3149", "3200:3249"],
       "null": ["5000:5049", "5100:5149", "5200:5249"],
       "6000": ["6000:6049", "6100:6149", "6200:6249"],
-      "6050": ["6050:6099", "6150:6199", "6250:6299"]
+      "6050": ["6050:6099", "6150:6199"],
+      "6250": ["6250:6299"]
     },
     "udp": {
       "4000": ["4001:4049", "4100:4149", "4200:4249"],
