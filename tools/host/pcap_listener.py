@@ -88,10 +88,12 @@ class PcapListener:
 
     def kill_listener(self):
         """Kill listener processes."""
-        self.pcap_process.send_signal(signal.SIGINT)
-        self.pcap_process.kill()
-        self.listener_process.send_signal(signal.SIGINT)
-        self.listener_process.kill()
+        tcpdump_pid = self.pcap_process.pid
+        tail_pid = self.listener_process.pid
+        while tcpdump_pid is not None:
+            os.kill(tcpdump_pid, signal.SIGTERM)
+        while tail_pid is not None:
+            os.kill(tail_pid, signal.SIGTERM)
 
     def create_listener_process(self):
         """Create pcap process and pcap listener."""
