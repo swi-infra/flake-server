@@ -39,6 +39,24 @@ def is_timeout(alt_time, timeout):
     return alt_time and time.time() - alt_time >= timeout
 
 
+def delete_pcap_processes(cmd):
+    """Delete Previous PCAP processes."""
+    flog.debug("Deleting Previous PCAP processses.")
+    command = 'ps -ef | grep "{}"'.format(cmd)
+    ps_output = os.popen(command).read()
+    print(ps_output)
+    if ps_output.count(cmd) > 2:
+        tail_pid = int(ps_output.split()[1])
+        parent_pid = int(ps_output.split()[2])
+        flog.debug("Previous Tail ID: {}".format(tail_pid))
+        flog.debug("Previous Parent ID: {}".format(parent_pid))
+        if tail_pid is not None:
+            flog.debug("Killing Tail PID: {}".format(tail_pid))
+            flog.debug("Killing Parent PID: {}".format(parent_pid))
+            os.kill(tail_pid, signal.SIGTERM)
+            os.kill(parent_pid, signal.SIGTERM)
+
+
 class PcapListener:
     """Pcap listener class."""
 
@@ -100,6 +118,7 @@ class PcapListener:
         self.open_pcap_process()
         cmd = "tail -c +1 -f {}".format(self.tmp_log)
         flog.debug("listener command: {}".format(cmd))
+        delete_pcap_processes(cmd)
         while not os.path.exists(self.tmp_log):
             continue
         self.listener_process = subprocess.Popen(
