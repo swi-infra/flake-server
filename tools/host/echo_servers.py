@@ -24,14 +24,8 @@ def tcp_handle(client_sock, address):
             flog.info("TCP Client Disconnected.")
             client_sock.close()
             break
-        except socket.timeout as err:
-            flog.info("TCP Handler Timed Out. Closing Socket.")
-            flog.info(err)
-            client_sock.close()
-            break
         except Exception as ex:
             flog.warning("TCP Handler Exception: {}".format(ex))
-            flog.info(ex)
             client_sock.close()
             break
     flog.info("End TCP Handler")
