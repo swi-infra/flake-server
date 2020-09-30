@@ -20,10 +20,6 @@ def tcp_handle(client_sock, address):
             if not data:
                 client_sock.close()
                 break
-        except ConnectionResetError:
-            flog.info("TCP Client Disconnected.")
-            client_sock.close()
-            break
         except Exception as ex:
             flog.warning("TCP Handler Exception: {}".format(ex))
             client_sock.close()

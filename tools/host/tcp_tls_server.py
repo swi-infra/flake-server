@@ -18,20 +18,8 @@ def tcp_tls_handle(conn_stream, client_sock):
                 conn_stream.close()
                 client_sock.close()
                 break
-        except ConnectionResetError:
-            flog.info("TCP TLS Client Disconnected.")
-            conn_stream.close()
-            client_sock.close()
-            break
-        except socket.timeout as err:
-            flog.info("TCP TLS Handler Timed Out. Closing Socket.")
-            flog.info(err)
-            conn_stream.close()
-            client_sock.close()
-            break
         except Exception as ex:
             flog.warning("TCP TLS Handler Exception: {}".format(ex))
-            flog.info(ex)
             conn_stream.close()
             client_sock.close()
             break
