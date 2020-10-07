@@ -44,7 +44,8 @@ COPY nginx/conf/nginx.conf /etc/nginx/
 COPY nginx/public/ /usr/share/nginx/public
 RUN mkdir -p /usr/share/nginx/logs
 
-EXPOSE 80/tcp \
+EXPOSE 21/tcp \
+       80/tcp \
        443/tcp \
        2000-2049/tcp \
        2100-2149/tcp \
