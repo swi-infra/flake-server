@@ -1,0 +1,2018 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flake-filter-deployment
+  labels:
+    app: flake-filter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flake-filter
+  template:
+    metadata:
+      labels:
+        app: flake-filter
+    spec:
+      volumes:
+      - name: filter-nginx-conf
+        configMap:
+          name: filter-nginx-conf
+      - name: log
+        emptyDir: {}
+      - name: internal-flake
+        secret:
+          secretName: internal-flake
+      containers:
+      - name: flake-filter
+        image: swifarm.azurecr.io/latest-nginx-xtra
+        imagePullPolicy: Always
+        securityContext:
+          privileged: true
+        env:
+        - name: FILTER
+          value: "1"
+        - name: SERVICES
+          value: "0"
+        # SERVICES_HOST points to Cluster IP of flake-services
+        # TODO: Point to flake-services IP without manually editing this value
+        - name: SERVICES_HOST
+          value: "172.20.9.68"
+        # FILTER_HOST takes current Cluster IP and routes traffic to SERVICES_HOST
+        - name: FILTER_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        volumeMounts:
+        - name: filter-nginx-conf
+          mountPath: "/etc/nginx/nginx.conf"
+          subPath: nginx.conf
+          readOnly: true
+        - name: log
+          mountPath: "var/log/nginx"
+        - name: internal-flake
+          mountPath: "/etc/internalflake"
+        ports:
+          - containerPort: 80
+          - containerPort: 443
+# 2000 range
+          - containerPort: 2000
+          - containerPort: 2001
+          - containerPort: 2002
+          - containerPort: 2003
+          - containerPort: 2004
+          - containerPort: 2005
+          - containerPort: 2006
+          - containerPort: 2007
+          - containerPort: 2008
+          - containerPort: 2009
+          - containerPort: 2010
+          - containerPort: 2011
+          - containerPort: 2012
+          - containerPort: 2013
+          - containerPort: 2014
+          - containerPort: 2015
+          - containerPort: 2016
+          - containerPort: 2017
+          - containerPort: 2018
+          - containerPort: 2019
+          - containerPort: 2020
+          - containerPort: 2021
+          - containerPort: 2022
+          - containerPort: 2023
+          - containerPort: 2024
+          - containerPort: 2025
+          - containerPort: 2026
+          - containerPort: 2027
+          - containerPort: 2028
+          - containerPort: 2029
+          - containerPort: 2030
+          - containerPort: 2031
+          - containerPort: 2032
+          - containerPort: 2033
+          - containerPort: 2034
+          - containerPort: 2035
+          - containerPort: 2036
+          - containerPort: 2037
+          - containerPort: 2038
+          - containerPort: 2039
+          - containerPort: 2040
+          - containerPort: 2041
+          - containerPort: 2042
+          - containerPort: 2043
+          - containerPort: 2044
+          - containerPort: 2045
+          - containerPort: 2046
+          - containerPort: 2047
+          - containerPort: 2048
+          - containerPort: 2049
+          - containerPort: 2100
+          - containerPort: 2101
+          - containerPort: 2102
+          - containerPort: 2103
+          - containerPort: 2104
+          - containerPort: 2105
+          - containerPort: 2106
+          - containerPort: 2107
+          - containerPort: 2108
+          - containerPort: 2109
+          - containerPort: 2110
+          - containerPort: 2111
+          - containerPort: 2112
+          - containerPort: 2113
+          - containerPort: 2114
+          - containerPort: 2115
+          - containerPort: 2116
+          - containerPort: 2117
+          - containerPort: 2118
+          - containerPort: 2119
+          - containerPort: 2120
+          - containerPort: 2121
+          - containerPort: 2122
+          - containerPort: 2123
+          - containerPort: 2124
+          - containerPort: 2125
+          - containerPort: 2126
+          - containerPort: 2127
+          - containerPort: 2128
+          - containerPort: 2129
+          - containerPort: 2130
+          - containerPort: 2131
+          - containerPort: 2132
+          - containerPort: 2133
+          - containerPort: 2134
+          - containerPort: 2135
+          - containerPort: 2136
+          - containerPort: 2137
+          - containerPort: 2138
+          - containerPort: 2139
+          - containerPort: 2140
+          - containerPort: 2141
+          - containerPort: 2142
+          - containerPort: 2143
+          - containerPort: 2144
+          - containerPort: 2145
+          - containerPort: 2146
+          - containerPort: 2147
+          - containerPort: 2148
+          - containerPort: 2149
+          - containerPort: 2200
+          - containerPort: 2201
+          - containerPort: 2202
+          - containerPort: 2203
+          - containerPort: 2204
+          - containerPort: 2205
+          - containerPort: 2206
+          - containerPort: 2207
+          - containerPort: 2208
+          - containerPort: 2209
+          - containerPort: 2210
+          - containerPort: 2211
+          - containerPort: 2212
+          - containerPort: 2213
+          - containerPort: 2214
+          - containerPort: 2215
+          - containerPort: 2216
+          - containerPort: 2217
+          - containerPort: 2218
+          - containerPort: 2219
+          - containerPort: 2220
+          - containerPort: 2221
+          - containerPort: 2222
+          - containerPort: 2223
+          - containerPort: 2224
+          - containerPort: 2225
+          - containerPort: 2226
+          - containerPort: 2227
+          - containerPort: 2228
+          - containerPort: 2229
+          - containerPort: 2230
+          - containerPort: 2231
+          - containerPort: 2232
+          - containerPort: 2233
+          - containerPort: 2234
+          - containerPort: 2235
+          - containerPort: 2236
+          - containerPort: 2237
+          - containerPort: 2238
+          - containerPort: 2239
+          - containerPort: 2240
+          - containerPort: 2241
+          - containerPort: 2242
+          - containerPort: 2243
+          - containerPort: 2244
+          - containerPort: 2245
+          - containerPort: 2246
+          - containerPort: 2247
+          - containerPort: 2248
+          - containerPort: 2249
+# 3000 range
+          - containerPort: 3000
+          - containerPort: 3001
+          - containerPort: 3002
+          - containerPort: 3003
+          - containerPort: 3004
+          - containerPort: 3005
+          - containerPort: 3006
+          - containerPort: 3007
+          - containerPort: 3008
+          - containerPort: 3009
+          - containerPort: 3010
+          - containerPort: 3011
+          - containerPort: 3012
+          - containerPort: 3013
+          - containerPort: 3014
+          - containerPort: 3015
+          - containerPort: 3016
+          - containerPort: 3017
+          - containerPort: 3018
+          - containerPort: 3019
+          - containerPort: 3020
+          - containerPort: 3021
+          - containerPort: 3022
+          - containerPort: 3023
+          - containerPort: 3024
+          - containerPort: 3025
+          - containerPort: 3026
+          - containerPort: 3027
+          - containerPort: 3028
+          - containerPort: 3029
+          - containerPort: 3030
+          - containerPort: 3031
+          - containerPort: 3032
+          - containerPort: 3033
+          - containerPort: 3034
+          - containerPort: 3035
+          - containerPort: 3036
+          - containerPort: 3037
+          - containerPort: 3038
+          - containerPort: 3039
+          - containerPort: 3040
+          - containerPort: 3041
+          - containerPort: 3042
+          - containerPort: 3043
+          - containerPort: 3044
+          - containerPort: 3045
+          - containerPort: 3046
+          - containerPort: 3047
+          - containerPort: 3048
+          - containerPort: 3049
+          - containerPort: 3100
+          - containerPort: 3101
+          - containerPort: 3102
+          - containerPort: 3103
+          - containerPort: 3104
+          - containerPort: 3105
+          - containerPort: 3106
+          - containerPort: 3107
+          - containerPort: 3108
+          - containerPort: 3109
+          - containerPort: 3110
+          - containerPort: 3111
+          - containerPort: 3112
+          - containerPort: 3113
+          - containerPort: 3114
+          - containerPort: 3115
+          - containerPort: 3116
+          - containerPort: 3117
+          - containerPort: 3118
+          - containerPort: 3119
+          - containerPort: 3120
+          - containerPort: 3121
+          - containerPort: 3122
+          - containerPort: 3123
+          - containerPort: 3124
+          - containerPort: 3125
+          - containerPort: 3126
+          - containerPort: 3127
+          - containerPort: 3128
+          - containerPort: 3129
+          - containerPort: 3130
+          - containerPort: 3131
+          - containerPort: 3132
+          - containerPort: 3133
+          - containerPort: 3134
+          - containerPort: 3135
+          - containerPort: 3136
+          - containerPort: 3137
+          - containerPort: 3138
+          - containerPort: 3139
+          - containerPort: 3140
+          - containerPort: 3141
+          - containerPort: 3142
+          - containerPort: 3143
+          - containerPort: 3144
+          - containerPort: 3145
+          - containerPort: 3146
+          - containerPort: 3147
+          - containerPort: 3148
+          - containerPort: 3149
+          - containerPort: 3200
+          - containerPort: 3201
+          - containerPort: 3202
+          - containerPort: 3203
+          - containerPort: 3204
+          - containerPort: 3205
+          - containerPort: 3206
+          - containerPort: 3207
+          - containerPort: 3208
+          - containerPort: 3209
+          - containerPort: 3210
+          - containerPort: 3211
+          - containerPort: 3212
+          - containerPort: 3213
+          - containerPort: 3214
+          - containerPort: 3215
+          - containerPort: 3216
+          - containerPort: 3217
+          - containerPort: 3218
+          - containerPort: 3219
+          - containerPort: 3220
+          - containerPort: 3221
+          - containerPort: 3222
+          - containerPort: 3223
+          - containerPort: 3224
+          - containerPort: 3225
+          - containerPort: 3226
+          - containerPort: 3227
+          - containerPort: 3228
+          - containerPort: 3229
+          - containerPort: 3230
+          - containerPort: 3231
+          - containerPort: 3232
+          - containerPort: 3233
+          - containerPort: 3234
+          - containerPort: 3235
+          - containerPort: 3236
+          - containerPort: 3237
+          - containerPort: 3238
+          - containerPort: 3239
+          - containerPort: 3240
+          - containerPort: 3241
+          - containerPort: 3242
+          - containerPort: 3243
+          - containerPort: 3244
+          - containerPort: 3245
+          - containerPort: 3246
+          - containerPort: 3247
+          - containerPort: 3248
+          - containerPort: 3249
+# 4000 range
+          - containerPort: 4000
+            protocol: UDP
+          - containerPort: 4001
+            protocol: UDP
+          - containerPort: 4002
+            protocol: UDP
+          - containerPort: 4003
+            protocol: UDP
+          - containerPort: 4004
+            protocol: UDP
+          - containerPort: 4005
+            protocol: UDP
+          - containerPort: 4006
+            protocol: UDP
+          - containerPort: 4007
+            protocol: UDP
+          - containerPort: 4008
+            protocol: UDP
+          - containerPort: 4009
+            protocol: UDP
+          - containerPort: 4010
+            protocol: UDP
+          - containerPort: 4011
+            protocol: UDP
+          - containerPort: 4012
+            protocol: UDP
+          - containerPort: 4013
+            protocol: UDP
+          - containerPort: 4014
+            protocol: UDP
+          - containerPort: 4015
+            protocol: UDP
+          - containerPort: 4016
+            protocol: UDP
+          - containerPort: 4017
+            protocol: UDP
+          - containerPort: 4018
+            protocol: UDP
+          - containerPort: 4019
+            protocol: UDP
+          - containerPort: 4020
+            protocol: UDP
+          - containerPort: 4021
+            protocol: UDP
+          - containerPort: 4022
+            protocol: UDP
+          - containerPort: 4023
+            protocol: UDP
+          - containerPort: 4024
+            protocol: UDP
+          - containerPort: 4025
+            protocol: UDP
+          - containerPort: 4026
+            protocol: UDP
+          - containerPort: 4027
+            protocol: UDP
+          - containerPort: 4028
+            protocol: UDP
+          - containerPort: 4029
+            protocol: UDP
+          - containerPort: 4030
+            protocol: UDP
+          - containerPort: 4031
+            protocol: UDP
+          - containerPort: 4032
+            protocol: UDP
+          - containerPort: 4033
+            protocol: UDP
+          - containerPort: 4034
+            protocol: UDP
+          - containerPort: 4035
+            protocol: UDP
+          - containerPort: 4036
+            protocol: UDP
+          - containerPort: 4037
+            protocol: UDP
+          - containerPort: 4038
+            protocol: UDP
+          - containerPort: 4039
+            protocol: UDP
+          - containerPort: 4040
+            protocol: UDP
+          - containerPort: 4041
+            protocol: UDP
+          - containerPort: 4042
+            protocol: UDP
+          - containerPort: 4043
+            protocol: UDP
+          - containerPort: 4044
+            protocol: UDP
+          - containerPort: 4045
+            protocol: UDP
+          - containerPort: 4046
+            protocol: UDP
+          - containerPort: 4047
+            protocol: UDP
+          - containerPort: 4048
+            protocol: UDP
+          - containerPort: 4049
+            protocol: UDP
+          - containerPort: 4100
+            protocol: UDP
+          - containerPort: 4101
+            protocol: UDP
+          - containerPort: 4102
+            protocol: UDP
+          - containerPort: 4103
+            protocol: UDP
+          - containerPort: 4104
+            protocol: UDP
+          - containerPort: 4105
+            protocol: UDP
+          - containerPort: 4106
+            protocol: UDP
+          - containerPort: 4107
+            protocol: UDP
+          - containerPort: 4108
+            protocol: UDP
+          - containerPort: 4109
+            protocol: UDP
+          - containerPort: 4110
+            protocol: UDP
+          - containerPort: 4111
+            protocol: UDP
+          - containerPort: 4112
+            protocol: UDP
+          - containerPort: 4113
+            protocol: UDP
+          - containerPort: 4114
+            protocol: UDP
+          - containerPort: 4115
+            protocol: UDP
+          - containerPort: 4116
+            protocol: UDP
+          - containerPort: 4117
+            protocol: UDP
+          - containerPort: 4118
+            protocol: UDP
+          - containerPort: 4119
+            protocol: UDP
+          - containerPort: 4120
+            protocol: UDP
+          - containerPort: 4121
+            protocol: UDP
+          - containerPort: 4122
+            protocol: UDP
+          - containerPort: 4123
+            protocol: UDP
+          - containerPort: 4124
+            protocol: UDP
+          - containerPort: 4125
+            protocol: UDP
+          - containerPort: 4126
+            protocol: UDP
+          - containerPort: 4127
+            protocol: UDP
+          - containerPort: 4128
+            protocol: UDP
+          - containerPort: 4129
+            protocol: UDP
+          - containerPort: 4130
+            protocol: UDP
+          - containerPort: 4131
+            protocol: UDP
+          - containerPort: 4132
+            protocol: UDP
+          - containerPort: 4133
+            protocol: UDP
+          - containerPort: 4134
+            protocol: UDP
+          - containerPort: 4135
+            protocol: UDP
+          - containerPort: 4136
+            protocol: UDP
+          - containerPort: 4137
+            protocol: UDP
+          - containerPort: 4138
+            protocol: UDP
+          - containerPort: 4139
+            protocol: UDP
+          - containerPort: 4140
+            protocol: UDP
+          - containerPort: 4141
+            protocol: UDP
+          - containerPort: 4142
+            protocol: UDP
+          - containerPort: 4143
+            protocol: UDP
+          - containerPort: 4144
+            protocol: UDP
+          - containerPort: 4145
+            protocol: UDP
+          - containerPort: 4146
+            protocol: UDP
+          - containerPort: 4147
+            protocol: UDP
+          - containerPort: 4148
+            protocol: UDP
+          - containerPort: 4149
+            protocol: UDP
+          - containerPort: 4200
+            protocol: UDP
+          - containerPort: 4201
+            protocol: UDP
+          - containerPort: 4202
+            protocol: UDP
+          - containerPort: 4203
+            protocol: UDP
+          - containerPort: 4204
+            protocol: UDP
+          - containerPort: 4205
+            protocol: UDP
+          - containerPort: 4206
+            protocol: UDP
+          - containerPort: 4207
+            protocol: UDP
+          - containerPort: 4208
+            protocol: UDP
+          - containerPort: 4209
+            protocol: UDP
+          - containerPort: 4210
+            protocol: UDP
+          - containerPort: 4211
+            protocol: UDP
+          - containerPort: 4212
+            protocol: UDP
+          - containerPort: 4213
+            protocol: UDP
+          - containerPort: 4214
+            protocol: UDP
+          - containerPort: 4215
+            protocol: UDP
+          - containerPort: 4216
+            protocol: UDP
+          - containerPort: 4217
+            protocol: UDP
+          - containerPort: 4218
+            protocol: UDP
+          - containerPort: 4219
+            protocol: UDP
+          - containerPort: 4220
+            protocol: UDP
+          - containerPort: 4221
+            protocol: UDP
+          - containerPort: 4222
+            protocol: UDP
+          - containerPort: 4223
+            protocol: UDP
+          - containerPort: 4224
+            protocol: UDP
+          - containerPort: 4225
+            protocol: UDP
+          - containerPort: 4226
+            protocol: UDP
+          - containerPort: 4227
+            protocol: UDP
+          - containerPort: 4228
+            protocol: UDP
+          - containerPort: 4229
+            protocol: UDP
+          - containerPort: 4230
+            protocol: UDP
+          - containerPort: 4231
+            protocol: UDP
+          - containerPort: 4232
+            protocol: UDP
+          - containerPort: 4233
+            protocol: UDP
+          - containerPort: 4234
+            protocol: UDP
+          - containerPort: 4235
+            protocol: UDP
+          - containerPort: 4236
+            protocol: UDP
+          - containerPort: 4237
+            protocol: UDP
+          - containerPort: 4238
+            protocol: UDP
+          - containerPort: 4239
+            protocol: UDP
+          - containerPort: 4240
+            protocol: UDP
+          - containerPort: 4241
+            protocol: UDP
+          - containerPort: 4242
+            protocol: UDP
+          - containerPort: 4243
+            protocol: UDP
+          - containerPort: 4244
+            protocol: UDP
+          - containerPort: 4245
+            protocol: UDP
+          - containerPort: 4246
+            protocol: UDP
+          - containerPort: 4247
+            protocol: UDP
+          - containerPort: 4248
+            protocol: UDP
+          - containerPort: 4249
+            protocol: UDP
+# 5000 range
+          - containerPort: 5000
+          - containerPort: 5001
+          - containerPort: 5002
+          - containerPort: 5003
+          - containerPort: 5004
+          - containerPort: 5005
+          - containerPort: 5006
+          - containerPort: 5007
+          - containerPort: 5008
+          - containerPort: 5009
+          - containerPort: 5010
+          - containerPort: 5011
+          - containerPort: 5012
+          - containerPort: 5013
+          - containerPort: 5014
+          - containerPort: 5015
+          - containerPort: 5016
+          - containerPort: 5017
+          - containerPort: 5018
+          - containerPort: 5019
+          - containerPort: 5020
+          - containerPort: 5021
+          - containerPort: 5022
+          - containerPort: 5023
+          - containerPort: 5024
+          - containerPort: 5025
+          - containerPort: 5026
+          - containerPort: 5027
+          - containerPort: 5028
+          - containerPort: 5029
+          - containerPort: 5030
+          - containerPort: 5031
+          - containerPort: 5032
+          - containerPort: 5033
+          - containerPort: 5034
+          - containerPort: 5035
+          - containerPort: 5036
+          - containerPort: 5037
+          - containerPort: 5038
+          - containerPort: 5039
+          - containerPort: 5040
+          - containerPort: 5041
+          - containerPort: 5042
+          - containerPort: 5043
+          - containerPort: 5044
+          - containerPort: 5045
+          - containerPort: 5046
+          - containerPort: 5047
+          - containerPort: 5048
+          - containerPort: 5049
+          - containerPort: 5100
+          - containerPort: 5101
+          - containerPort: 5102
+          - containerPort: 5103
+          - containerPort: 5104
+          - containerPort: 5105
+          - containerPort: 5106
+          - containerPort: 5107
+          - containerPort: 5108
+          - containerPort: 5109
+          - containerPort: 5110
+          - containerPort: 5111
+          - containerPort: 5112
+          - containerPort: 5113
+          - containerPort: 5114
+          - containerPort: 5115
+          - containerPort: 5116
+          - containerPort: 5117
+          - containerPort: 5118
+          - containerPort: 5119
+          - containerPort: 5120
+          - containerPort: 5121
+          - containerPort: 5122
+          - containerPort: 5123
+          - containerPort: 5124
+          - containerPort: 5125
+          - containerPort: 5126
+          - containerPort: 5127
+          - containerPort: 5128
+          - containerPort: 5129
+          - containerPort: 5130
+          - containerPort: 5131
+          - containerPort: 5132
+          - containerPort: 5133
+          - containerPort: 5134
+          - containerPort: 5135
+          - containerPort: 5136
+          - containerPort: 5137
+          - containerPort: 5138
+          - containerPort: 5139
+          - containerPort: 5140
+          - containerPort: 5141
+          - containerPort: 5142
+          - containerPort: 5143
+          - containerPort: 5144
+          - containerPort: 5145
+          - containerPort: 5146
+          - containerPort: 5147
+          - containerPort: 5148
+          - containerPort: 5149
+          - containerPort: 5200
+          - containerPort: 5201
+          - containerPort: 5202
+          - containerPort: 5203
+          - containerPort: 5204
+          - containerPort: 5205
+          - containerPort: 5206
+          - containerPort: 5207
+          - containerPort: 5208
+          - containerPort: 5209
+          - containerPort: 5210
+          - containerPort: 5211
+          - containerPort: 5212
+          - containerPort: 5213
+          - containerPort: 5214
+          - containerPort: 5215
+          - containerPort: 5216
+          - containerPort: 5217
+          - containerPort: 5218
+          - containerPort: 5219
+          - containerPort: 5220
+          - containerPort: 5221
+          - containerPort: 5222
+          - containerPort: 5223
+          - containerPort: 5224
+          - containerPort: 5225
+          - containerPort: 5226
+          - containerPort: 5227
+          - containerPort: 5228
+          - containerPort: 5229
+          - containerPort: 5230
+          - containerPort: 5231
+          - containerPort: 5232
+          - containerPort: 5233
+          - containerPort: 5234
+          - containerPort: 5235
+          - containerPort: 5236
+          - containerPort: 5237
+          - containerPort: 5238
+          - containerPort: 5239
+          - containerPort: 5240
+          - containerPort: 5241
+          - containerPort: 5242
+          - containerPort: 5243
+          - containerPort: 5244
+          - containerPort: 5245
+          - containerPort: 5246
+          - containerPort: 5247
+          - containerPort: 5248
+          - containerPort: 5249
+# 5000 UDP range
+          - containerPort: 5000
+            protocol: UDP
+          - containerPort: 5001
+            protocol: UDP
+          - containerPort: 5002
+            protocol: UDP
+          - containerPort: 5003
+            protocol: UDP
+          - containerPort: 5004
+            protocol: UDP
+          - containerPort: 5005
+            protocol: UDP
+          - containerPort: 5006
+            protocol: UDP
+          - containerPort: 5007
+            protocol: UDP
+          - containerPort: 5008
+            protocol: UDP
+          - containerPort: 5009
+            protocol: UDP
+          - containerPort: 5010
+            protocol: UDP
+          - containerPort: 5011
+            protocol: UDP
+          - containerPort: 5012
+            protocol: UDP
+          - containerPort: 5013
+            protocol: UDP
+          - containerPort: 5014
+            protocol: UDP
+          - containerPort: 5015
+            protocol: UDP
+          - containerPort: 5016
+            protocol: UDP
+          - containerPort: 5017
+            protocol: UDP
+          - containerPort: 5018
+            protocol: UDP
+          - containerPort: 5019
+            protocol: UDP
+          - containerPort: 5020
+            protocol: UDP
+          - containerPort: 5021
+            protocol: UDP
+          - containerPort: 5022
+            protocol: UDP
+          - containerPort: 5023
+            protocol: UDP
+          - containerPort: 5024
+            protocol: UDP
+          - containerPort: 5025
+            protocol: UDP
+          - containerPort: 5026
+            protocol: UDP
+          - containerPort: 5027
+            protocol: UDP
+          - containerPort: 5028
+            protocol: UDP
+          - containerPort: 5029
+            protocol: UDP
+          - containerPort: 5030
+            protocol: UDP
+          - containerPort: 5031
+            protocol: UDP
+          - containerPort: 5032
+            protocol: UDP
+          - containerPort: 5033
+            protocol: UDP
+          - containerPort: 5034
+            protocol: UDP
+          - containerPort: 5035
+            protocol: UDP
+          - containerPort: 5036
+            protocol: UDP
+          - containerPort: 5037
+            protocol: UDP
+          - containerPort: 5038
+            protocol: UDP
+          - containerPort: 5039
+            protocol: UDP
+          - containerPort: 5040
+            protocol: UDP
+          - containerPort: 5041
+            protocol: UDP
+          - containerPort: 5042
+            protocol: UDP
+          - containerPort: 5043
+            protocol: UDP
+          - containerPort: 5044
+            protocol: UDP
+          - containerPort: 5045
+            protocol: UDP
+          - containerPort: 5046
+            protocol: UDP
+          - containerPort: 5047
+            protocol: UDP
+          - containerPort: 5048
+            protocol: UDP
+          - containerPort: 5049
+            protocol: UDP
+          - containerPort: 5100
+            protocol: UDP
+          - containerPort: 5101
+            protocol: UDP
+          - containerPort: 5102
+            protocol: UDP
+          - containerPort: 5103
+            protocol: UDP
+          - containerPort: 5104
+            protocol: UDP
+          - containerPort: 5105
+            protocol: UDP
+          - containerPort: 5106
+            protocol: UDP
+          - containerPort: 5107
+            protocol: UDP
+          - containerPort: 5108
+            protocol: UDP
+          - containerPort: 5109
+            protocol: UDP
+          - containerPort: 5110
+            protocol: UDP
+          - containerPort: 5111
+            protocol: UDP
+          - containerPort: 5112
+            protocol: UDP
+          - containerPort: 5113
+            protocol: UDP
+          - containerPort: 5114
+            protocol: UDP
+          - containerPort: 5115
+            protocol: UDP
+          - containerPort: 5116
+            protocol: UDP
+          - containerPort: 5117
+            protocol: UDP
+          - containerPort: 5118
+            protocol: UDP
+          - containerPort: 5119
+            protocol: UDP
+          - containerPort: 5120
+            protocol: UDP
+          - containerPort: 5121
+            protocol: UDP
+          - containerPort: 5122
+            protocol: UDP
+          - containerPort: 5123
+            protocol: UDP
+          - containerPort: 5124
+            protocol: UDP
+          - containerPort: 5125
+            protocol: UDP
+          - containerPort: 5126
+            protocol: UDP
+          - containerPort: 5127
+            protocol: UDP
+          - containerPort: 5128
+            protocol: UDP
+          - containerPort: 5129
+            protocol: UDP
+          - containerPort: 5130
+            protocol: UDP
+          - containerPort: 5131
+            protocol: UDP
+          - containerPort: 5132
+            protocol: UDP
+          - containerPort: 5133
+            protocol: UDP
+          - containerPort: 5134
+            protocol: UDP
+          - containerPort: 5135
+            protocol: UDP
+          - containerPort: 5136
+            protocol: UDP
+          - containerPort: 5137
+            protocol: UDP
+          - containerPort: 5138
+            protocol: UDP
+          - containerPort: 5139
+            protocol: UDP
+          - containerPort: 5140
+            protocol: UDP
+          - containerPort: 5141
+            protocol: UDP
+          - containerPort: 5142
+            protocol: UDP
+          - containerPort: 5143
+            protocol: UDP
+          - containerPort: 5144
+            protocol: UDP
+          - containerPort: 5145
+            protocol: UDP
+          - containerPort: 5146
+            protocol: UDP
+          - containerPort: 5147
+            protocol: UDP
+          - containerPort: 5148
+            protocol: UDP
+          - containerPort: 5149
+            protocol: UDP
+          - containerPort: 5200
+            protocol: UDP
+          - containerPort: 5201
+            protocol: UDP
+          - containerPort: 5202
+            protocol: UDP
+          - containerPort: 5203
+            protocol: UDP
+          - containerPort: 5204
+            protocol: UDP
+          - containerPort: 5205
+            protocol: UDP
+          - containerPort: 5206
+            protocol: UDP
+          - containerPort: 5207
+            protocol: UDP
+          - containerPort: 5208
+            protocol: UDP
+          - containerPort: 5209
+            protocol: UDP
+          - containerPort: 5210
+            protocol: UDP
+          - containerPort: 5211
+            protocol: UDP
+          - containerPort: 5212
+            protocol: UDP
+          - containerPort: 5213
+            protocol: UDP
+          - containerPort: 5214
+            protocol: UDP
+          - containerPort: 5215
+            protocol: UDP
+          - containerPort: 5216
+            protocol: UDP
+          - containerPort: 5217
+            protocol: UDP
+          - containerPort: 5218
+            protocol: UDP
+          - containerPort: 5219
+            protocol: UDP
+          - containerPort: 5220
+            protocol: UDP
+          - containerPort: 5221
+            protocol: UDP
+          - containerPort: 5222
+            protocol: UDP
+          - containerPort: 5223
+            protocol: UDP
+          - containerPort: 5224
+            protocol: UDP
+          - containerPort: 5225
+            protocol: UDP
+          - containerPort: 5226
+            protocol: UDP
+          - containerPort: 5227
+            protocol: UDP
+          - containerPort: 5228
+            protocol: UDP
+          - containerPort: 5229
+            protocol: UDP
+          - containerPort: 5230
+            protocol: UDP
+          - containerPort: 5231
+            protocol: UDP
+          - containerPort: 5232
+            protocol: UDP
+          - containerPort: 5233
+            protocol: UDP
+          - containerPort: 5234
+            protocol: UDP
+          - containerPort: 5235
+            protocol: UDP
+          - containerPort: 5236
+            protocol: UDP
+          - containerPort: 5237
+            protocol: UDP
+          - containerPort: 5238
+            protocol: UDP
+          - containerPort: 5239
+            protocol: UDP
+          - containerPort: 5240
+            protocol: UDP
+          - containerPort: 5241
+            protocol: UDP
+          - containerPort: 5242
+            protocol: UDP
+          - containerPort: 5243
+            protocol: UDP
+          - containerPort: 5244
+            protocol: UDP
+          - containerPort: 5245
+            protocol: UDP
+          - containerPort: 5246
+            protocol: UDP
+          - containerPort: 5247
+            protocol: UDP
+          - containerPort: 5248
+            protocol: UDP
+          - containerPort: 5249
+            protocol: UDP
+# 6000 range
+          - containerPort: 6000
+          - containerPort: 6001
+          - containerPort: 6002
+          - containerPort: 6003
+          - containerPort: 6004
+          - containerPort: 6005
+          - containerPort: 6006
+          - containerPort: 6007
+          - containerPort: 6008
+          - containerPort: 6009
+          - containerPort: 6010
+          - containerPort: 6011
+          - containerPort: 6012
+          - containerPort: 6013
+          - containerPort: 6014
+          - containerPort: 6015
+          - containerPort: 6016
+          - containerPort: 6017
+          - containerPort: 6018
+          - containerPort: 6019
+          - containerPort: 6020
+          - containerPort: 6021
+          - containerPort: 6022
+          - containerPort: 6023
+          - containerPort: 6024
+          - containerPort: 6025
+          - containerPort: 6026
+          - containerPort: 6027
+          - containerPort: 6028
+          - containerPort: 6029
+          - containerPort: 6030
+          - containerPort: 6031
+          - containerPort: 6032
+          - containerPort: 6033
+          - containerPort: 6034
+          - containerPort: 6035
+          - containerPort: 6036
+          - containerPort: 6037
+          - containerPort: 6038
+          - containerPort: 6039
+          - containerPort: 6040
+          - containerPort: 6041
+          - containerPort: 6042
+          - containerPort: 6043
+          - containerPort: 6044
+          - containerPort: 6045
+          - containerPort: 6046
+          - containerPort: 6047
+          - containerPort: 6048
+          - containerPort: 6049
+          - containerPort: 6050
+          - containerPort: 6051
+          - containerPort: 6052
+          - containerPort: 6053
+          - containerPort: 6054
+          - containerPort: 6055
+          - containerPort: 6056
+          - containerPort: 6057
+          - containerPort: 6058
+          - containerPort: 6059
+          - containerPort: 6060
+          - containerPort: 6061
+          - containerPort: 6062
+          - containerPort: 6063
+          - containerPort: 6064
+          - containerPort: 6065
+          - containerPort: 6066
+          - containerPort: 6067
+          - containerPort: 6068
+          - containerPort: 6069
+          - containerPort: 6070
+          - containerPort: 6071
+          - containerPort: 6072
+          - containerPort: 6073
+          - containerPort: 6074
+          - containerPort: 6075
+          - containerPort: 6076
+          - containerPort: 6077
+          - containerPort: 6078
+          - containerPort: 6079
+          - containerPort: 6080
+          - containerPort: 6081
+          - containerPort: 6082
+          - containerPort: 6083
+          - containerPort: 6084
+          - containerPort: 6085
+          - containerPort: 6086
+          - containerPort: 6087
+          - containerPort: 6088
+          - containerPort: 6089
+          - containerPort: 6090
+          - containerPort: 6091
+          - containerPort: 6092
+          - containerPort: 6093
+          - containerPort: 6094
+          - containerPort: 6095
+          - containerPort: 6096
+          - containerPort: 6097
+          - containerPort: 6098
+          - containerPort: 6099
+          - containerPort: 6100
+          - containerPort: 6101
+          - containerPort: 6102
+          - containerPort: 6103
+          - containerPort: 6104
+          - containerPort: 6105
+          - containerPort: 6106
+          - containerPort: 6107
+          - containerPort: 6108
+          - containerPort: 6109
+          - containerPort: 6110
+          - containerPort: 6111
+          - containerPort: 6112
+          - containerPort: 6113
+          - containerPort: 6114
+          - containerPort: 6115
+          - containerPort: 6116
+          - containerPort: 6117
+          - containerPort: 6118
+          - containerPort: 6119
+          - containerPort: 6120
+          - containerPort: 6121
+          - containerPort: 6122
+          - containerPort: 6123
+          - containerPort: 6124
+          - containerPort: 6125
+          - containerPort: 6126
+          - containerPort: 6127
+          - containerPort: 6128
+          - containerPort: 6129
+          - containerPort: 6130
+          - containerPort: 6131
+          - containerPort: 6132
+          - containerPort: 6133
+          - containerPort: 6134
+          - containerPort: 6135
+          - containerPort: 6136
+          - containerPort: 6137
+          - containerPort: 6138
+          - containerPort: 6139
+          - containerPort: 6140
+          - containerPort: 6141
+          - containerPort: 6142
+          - containerPort: 6143
+          - containerPort: 6144
+          - containerPort: 6145
+          - containerPort: 6146
+          - containerPort: 6147
+          - containerPort: 6148
+          - containerPort: 6149
+          - containerPort: 6150
+          - containerPort: 6151
+          - containerPort: 6152
+          - containerPort: 6153
+          - containerPort: 6154
+          - containerPort: 6155
+          - containerPort: 6156
+          - containerPort: 6157
+          - containerPort: 6158
+          - containerPort: 6159
+          - containerPort: 6160
+          - containerPort: 6161
+          - containerPort: 6162
+          - containerPort: 6163
+          - containerPort: 6164
+          - containerPort: 6165
+          - containerPort: 6166
+          - containerPort: 6167
+          - containerPort: 6168
+          - containerPort: 6169
+          - containerPort: 6170
+          - containerPort: 6171
+          - containerPort: 6172
+          - containerPort: 6173
+          - containerPort: 6174
+          - containerPort: 6175
+          - containerPort: 6176
+          - containerPort: 6177
+          - containerPort: 6178
+          - containerPort: 6179
+          - containerPort: 6180
+          - containerPort: 6181
+          - containerPort: 6182
+          - containerPort: 6183
+          - containerPort: 6184
+          - containerPort: 6185
+          - containerPort: 6186
+          - containerPort: 6187
+          - containerPort: 6188
+          - containerPort: 6189
+          - containerPort: 6190
+          - containerPort: 6191
+          - containerPort: 6192
+          - containerPort: 6193
+          - containerPort: 6194
+          - containerPort: 6195
+          - containerPort: 6196
+          - containerPort: 6197
+          - containerPort: 6198
+          - containerPort: 6199
+          - containerPort: 6200
+          - containerPort: 6201
+          - containerPort: 6202
+          - containerPort: 6203
+          - containerPort: 6204
+          - containerPort: 6205
+          - containerPort: 6206
+          - containerPort: 6207
+          - containerPort: 6208
+          - containerPort: 6209
+          - containerPort: 6210
+          - containerPort: 6211
+          - containerPort: 6212
+          - containerPort: 6213
+          - containerPort: 6214
+          - containerPort: 6215
+          - containerPort: 6216
+          - containerPort: 6217
+          - containerPort: 6218
+          - containerPort: 6219
+          - containerPort: 6220
+          - containerPort: 6221
+          - containerPort: 6222
+          - containerPort: 6223
+          - containerPort: 6224
+          - containerPort: 6225
+          - containerPort: 6226
+          - containerPort: 6227
+          - containerPort: 6228
+          - containerPort: 6229
+          - containerPort: 6230
+          - containerPort: 6231
+          - containerPort: 6232
+          - containerPort: 6233
+          - containerPort: 6234
+          - containerPort: 6235
+          - containerPort: 6236
+          - containerPort: 6237
+          - containerPort: 6238
+          - containerPort: 6239
+          - containerPort: 6240
+          - containerPort: 6241
+          - containerPort: 6242
+          - containerPort: 6243
+          - containerPort: 6244
+          - containerPort: 6245
+          - containerPort: 6246
+          - containerPort: 6247
+          - containerPort: 6248
+          - containerPort: 6249
+          - containerPort: 6250
+          - containerPort: 6251
+          - containerPort: 6252
+          - containerPort: 6253
+          - containerPort: 6254
+          - containerPort: 6255
+          - containerPort: 6256
+          - containerPort: 6257
+          - containerPort: 6258
+          - containerPort: 6259
+          - containerPort: 6260
+          - containerPort: 6261
+          - containerPort: 6262
+          - containerPort: 6263
+          - containerPort: 6264
+          - containerPort: 6265
+          - containerPort: 6266
+          - containerPort: 6267
+          - containerPort: 6268
+          - containerPort: 6269
+          - containerPort: 6270
+          - containerPort: 6271
+          - containerPort: 6272
+          - containerPort: 6273
+          - containerPort: 6274
+          - containerPort: 6275
+          - containerPort: 6276
+          - containerPort: 6277
+          - containerPort: 6278
+          - containerPort: 6279
+          - containerPort: 6280
+          - containerPort: 6281
+          - containerPort: 6282
+          - containerPort: 6283
+          - containerPort: 6284
+          - containerPort: 6285
+          - containerPort: 6286
+          - containerPort: 6287
+          - containerPort: 6288
+          - containerPort: 6289
+          - containerPort: 6290
+          - containerPort: 6291
+          - containerPort: 6292
+          - containerPort: 6293
+          - containerPort: 6294
+          - containerPort: 6295
+          - containerPort: 6296
+          - containerPort: 6297
+          - containerPort: 6298
+          - containerPort: 6299
+# 6000 UDP range
+          - containerPort: 6000
+            protocol: UDP
+          - containerPort: 6001
+            protocol: UDP
+          - containerPort: 6002
+            protocol: UDP
+          - containerPort: 6003
+            protocol: UDP
+          - containerPort: 6004
+            protocol: UDP
+          - containerPort: 6005
+            protocol: UDP
+          - containerPort: 6006
+            protocol: UDP
+          - containerPort: 6007
+            protocol: UDP
+          - containerPort: 6008
+            protocol: UDP
+          - containerPort: 6009
+            protocol: UDP
+          - containerPort: 6010
+            protocol: UDP
+          - containerPort: 6011
+            protocol: UDP
+          - containerPort: 6012
+            protocol: UDP
+          - containerPort: 6013
+            protocol: UDP
+          - containerPort: 6014
+            protocol: UDP
+          - containerPort: 6015
+            protocol: UDP
+          - containerPort: 6016
+            protocol: UDP
+          - containerPort: 6017
+            protocol: UDP
+          - containerPort: 6018
+            protocol: UDP
+          - containerPort: 6019
+            protocol: UDP
+          - containerPort: 6020
+            protocol: UDP
+          - containerPort: 6021
+            protocol: UDP
+          - containerPort: 6022
+            protocol: UDP
+          - containerPort: 6023
+            protocol: UDP
+          - containerPort: 6024
+            protocol: UDP
+          - containerPort: 6025
+            protocol: UDP
+          - containerPort: 6026
+            protocol: UDP
+          - containerPort: 6027
+            protocol: UDP
+          - containerPort: 6028
+            protocol: UDP
+          - containerPort: 6029
+            protocol: UDP
+          - containerPort: 6030
+            protocol: UDP
+          - containerPort: 6031
+            protocol: UDP
+          - containerPort: 6032
+            protocol: UDP
+          - containerPort: 6033
+            protocol: UDP
+          - containerPort: 6034
+            protocol: UDP
+          - containerPort: 6035
+            protocol: UDP
+          - containerPort: 6036
+            protocol: UDP
+          - containerPort: 6037
+            protocol: UDP
+          - containerPort: 6038
+            protocol: UDP
+          - containerPort: 6039
+            protocol: UDP
+          - containerPort: 6040
+            protocol: UDP
+          - containerPort: 6041
+            protocol: UDP
+          - containerPort: 6042
+            protocol: UDP
+          - containerPort: 6043
+            protocol: UDP
+          - containerPort: 6044
+            protocol: UDP
+          - containerPort: 6045
+            protocol: UDP
+          - containerPort: 6046
+            protocol: UDP
+          - containerPort: 6047
+            protocol: UDP
+          - containerPort: 6048
+            protocol: UDP
+          - containerPort: 6049
+            protocol: UDP
+          - containerPort: 6050
+            protocol: UDP
+          - containerPort: 6051
+            protocol: UDP
+          - containerPort: 6052
+            protocol: UDP
+          - containerPort: 6053
+            protocol: UDP
+          - containerPort: 6054
+            protocol: UDP
+          - containerPort: 6055
+            protocol: UDP
+          - containerPort: 6056
+            protocol: UDP
+          - containerPort: 6057
+            protocol: UDP
+          - containerPort: 6058
+            protocol: UDP
+          - containerPort: 6059
+            protocol: UDP
+          - containerPort: 6060
+            protocol: UDP
+          - containerPort: 6061
+            protocol: UDP
+          - containerPort: 6062
+            protocol: UDP
+          - containerPort: 6063
+            protocol: UDP
+          - containerPort: 6064
+            protocol: UDP
+          - containerPort: 6065
+            protocol: UDP
+          - containerPort: 6066
+            protocol: UDP
+          - containerPort: 6067
+            protocol: UDP
+          - containerPort: 6068
+            protocol: UDP
+          - containerPort: 6069
+            protocol: UDP
+          - containerPort: 6070
+            protocol: UDP
+          - containerPort: 6071
+            protocol: UDP
+          - containerPort: 6072
+            protocol: UDP
+          - containerPort: 6073
+            protocol: UDP
+          - containerPort: 6074
+            protocol: UDP
+          - containerPort: 6075
+            protocol: UDP
+          - containerPort: 6076
+            protocol: UDP
+          - containerPort: 6077
+            protocol: UDP
+          - containerPort: 6078
+            protocol: UDP
+          - containerPort: 6079
+            protocol: UDP
+          - containerPort: 6080
+            protocol: UDP
+          - containerPort: 6081
+            protocol: UDP
+          - containerPort: 6082
+            protocol: UDP
+          - containerPort: 6083
+            protocol: UDP
+          - containerPort: 6084
+            protocol: UDP
+          - containerPort: 6085
+            protocol: UDP
+          - containerPort: 6086
+            protocol: UDP
+          - containerPort: 6087
+            protocol: UDP
+          - containerPort: 6088
+            protocol: UDP
+          - containerPort: 6089
+            protocol: UDP
+          - containerPort: 6090
+            protocol: UDP
+          - containerPort: 6091
+            protocol: UDP
+          - containerPort: 6092
+            protocol: UDP
+          - containerPort: 6093
+            protocol: UDP
+          - containerPort: 6094
+            protocol: UDP
+          - containerPort: 6095
+            protocol: UDP
+          - containerPort: 6096
+            protocol: UDP
+          - containerPort: 6097
+            protocol: UDP
+          - containerPort: 6098
+            protocol: UDP
+          - containerPort: 6099
+            protocol: UDP
+          - containerPort: 6100
+            protocol: UDP
+          - containerPort: 6101
+            protocol: UDP
+          - containerPort: 6102
+            protocol: UDP
+          - containerPort: 6103
+            protocol: UDP
+          - containerPort: 6104
+            protocol: UDP
+          - containerPort: 6105
+            protocol: UDP
+          - containerPort: 6106
+            protocol: UDP
+          - containerPort: 6107
+            protocol: UDP
+          - containerPort: 6108
+            protocol: UDP
+          - containerPort: 6109
+            protocol: UDP
+          - containerPort: 6110
+            protocol: UDP
+          - containerPort: 6111
+            protocol: UDP
+          - containerPort: 6112
+            protocol: UDP
+          - containerPort: 6113
+            protocol: UDP
+          - containerPort: 6114
+            protocol: UDP
+          - containerPort: 6115
+            protocol: UDP
+          - containerPort: 6116
+            protocol: UDP
+          - containerPort: 6117
+            protocol: UDP
+          - containerPort: 6118
+            protocol: UDP
+          - containerPort: 6119
+            protocol: UDP
+          - containerPort: 6120
+            protocol: UDP
+          - containerPort: 6121
+            protocol: UDP
+          - containerPort: 6122
+            protocol: UDP
+          - containerPort: 6123
+            protocol: UDP
+          - containerPort: 6124
+            protocol: UDP
+          - containerPort: 6125
+            protocol: UDP
+          - containerPort: 6126
+            protocol: UDP
+          - containerPort: 6127
+            protocol: UDP
+          - containerPort: 6128
+            protocol: UDP
+          - containerPort: 6129
+            protocol: UDP
+          - containerPort: 6130
+            protocol: UDP
+          - containerPort: 6131
+            protocol: UDP
+          - containerPort: 6132
+            protocol: UDP
+          - containerPort: 6133
+            protocol: UDP
+          - containerPort: 6134
+            protocol: UDP
+          - containerPort: 6135
+            protocol: UDP
+          - containerPort: 6136
+            protocol: UDP
+          - containerPort: 6137
+            protocol: UDP
+          - containerPort: 6138
+            protocol: UDP
+          - containerPort: 6139
+            protocol: UDP
+          - containerPort: 6140
+            protocol: UDP
+          - containerPort: 6141
+            protocol: UDP
+          - containerPort: 6142
+            protocol: UDP
+          - containerPort: 6143
+            protocol: UDP
+          - containerPort: 6144
+            protocol: UDP
+          - containerPort: 6145
+            protocol: UDP
+          - containerPort: 6146
+            protocol: UDP
+          - containerPort: 6147
+            protocol: UDP
+          - containerPort: 6148
+            protocol: UDP
+          - containerPort: 6149
+            protocol: UDP
+          - containerPort: 6150
+            protocol: UDP
+          - containerPort: 6151
+            protocol: UDP
+          - containerPort: 6152
+            protocol: UDP
+          - containerPort: 6153
+            protocol: UDP
+          - containerPort: 6154
+            protocol: UDP
+          - containerPort: 6155
+            protocol: UDP
+          - containerPort: 6156
+            protocol: UDP
+          - containerPort: 6157
+            protocol: UDP
+          - containerPort: 6158
+            protocol: UDP
+          - containerPort: 6159
+            protocol: UDP
+          - containerPort: 6160
+            protocol: UDP
+          - containerPort: 6161
+            protocol: UDP
+          - containerPort: 6162
+            protocol: UDP
+          - containerPort: 6163
+            protocol: UDP
+          - containerPort: 6164
+            protocol: UDP
+          - containerPort: 6165
+            protocol: UDP
+          - containerPort: 6166
+            protocol: UDP
+          - containerPort: 6167
+            protocol: UDP
+          - containerPort: 6168
+            protocol: UDP
+          - containerPort: 6169
+            protocol: UDP
+          - containerPort: 6170
+            protocol: UDP
+          - containerPort: 6171
+            protocol: UDP
+          - containerPort: 6172
+            protocol: UDP
+          - containerPort: 6173
+            protocol: UDP
+          - containerPort: 6174
+            protocol: UDP
+          - containerPort: 6175
+            protocol: UDP
+          - containerPort: 6176
+            protocol: UDP
+          - containerPort: 6177
+            protocol: UDP
+          - containerPort: 6178
+            protocol: UDP
+          - containerPort: 6179
+            protocol: UDP
+          - containerPort: 6180
+            protocol: UDP
+          - containerPort: 6181
+            protocol: UDP
+          - containerPort: 6182
+            protocol: UDP
+          - containerPort: 6183
+            protocol: UDP
+          - containerPort: 6184
+            protocol: UDP
+          - containerPort: 6185
+            protocol: UDP
+          - containerPort: 6186
+            protocol: UDP
+          - containerPort: 6187
+            protocol: UDP
+          - containerPort: 6188
+            protocol: UDP
+          - containerPort: 6189
+            protocol: UDP
+          - containerPort: 6190
+            protocol: UDP
+          - containerPort: 6191
+            protocol: UDP
+          - containerPort: 6192
+            protocol: UDP
+          - containerPort: 6193
+            protocol: UDP
+          - containerPort: 6194
+            protocol: UDP
+          - containerPort: 6195
+            protocol: UDP
+          - containerPort: 6196
+            protocol: UDP
+          - containerPort: 6197
+            protocol: UDP
+          - containerPort: 6198
+            protocol: UDP
+          - containerPort: 6199
+            protocol: UDP
+          - containerPort: 6100
+            protocol: UDP
+          - containerPort: 6200
+            protocol: UDP
+          - containerPort: 6201
+            protocol: UDP
+          - containerPort: 6202
+            protocol: UDP
+          - containerPort: 6203
+            protocol: UDP
+          - containerPort: 6204
+            protocol: UDP
+          - containerPort: 6205
+            protocol: UDP
+          - containerPort: 6206
+            protocol: UDP
+          - containerPort: 6207
+            protocol: UDP
+          - containerPort: 6208
+            protocol: UDP
+          - containerPort: 6209
+            protocol: UDP
+          - containerPort: 6210
+            protocol: UDP
+          - containerPort: 6211
+            protocol: UDP
+          - containerPort: 6212
+            protocol: UDP
+          - containerPort: 6213
+            protocol: UDP
+          - containerPort: 6214
+            protocol: UDP
+          - containerPort: 6215
+            protocol: UDP
+          - containerPort: 6216
+            protocol: UDP
+          - containerPort: 6217
+            protocol: UDP
+          - containerPort: 6218
+            protocol: UDP
+          - containerPort: 6219
+            protocol: UDP
+          - containerPort: 6220
+            protocol: UDP
+          - containerPort: 6221
+            protocol: UDP
+          - containerPort: 6222
+            protocol: UDP
+          - containerPort: 6223
+            protocol: UDP
+          - containerPort: 6224
+            protocol: UDP
+          - containerPort: 6225
+            protocol: UDP
+          - containerPort: 6226
+            protocol: UDP
+          - containerPort: 6227
+            protocol: UDP
+          - containerPort: 6228
+            protocol: UDP
+          - containerPort: 6229
+            protocol: UDP
+          - containerPort: 6230
+            protocol: UDP
+          - containerPort: 6231
+            protocol: UDP
+          - containerPort: 6232
+            protocol: UDP
+          - containerPort: 6233
+            protocol: UDP
+          - containerPort: 6234
+            protocol: UDP
+          - containerPort: 6235
+            protocol: UDP
+          - containerPort: 6236
+            protocol: UDP
+          - containerPort: 6237
+            protocol: UDP
+          - containerPort: 6238
+            protocol: UDP
+          - containerPort: 6239
+            protocol: UDP
+          - containerPort: 6240
+            protocol: UDP
+          - containerPort: 6241
+            protocol: UDP
+          - containerPort: 6242
+            protocol: UDP
+          - containerPort: 6243
+            protocol: UDP
+          - containerPort: 6244
+            protocol: UDP
+          - containerPort: 6245
+            protocol: UDP
+          - containerPort: 6246
+            protocol: UDP
+          - containerPort: 6247
+            protocol: UDP
+          - containerPort: 6248
+            protocol: UDP
+          - containerPort: 6249
+            protocol: UDP
+          - containerPort: 6250
+            protocol: UDP
+          - containerPort: 6251
+            protocol: UDP
+          - containerPort: 6252
+            protocol: UDP
+          - containerPort: 6253
+            protocol: UDP
+          - containerPort: 6254
+            protocol: UDP
+          - containerPort: 6255
+            protocol: UDP
+          - containerPort: 6256
+            protocol: UDP
+          - containerPort: 6257
+            protocol: UDP
+          - containerPort: 6258
+            protocol: UDP
+          - containerPort: 6259
+            protocol: UDP
+          - containerPort: 6260
+            protocol: UDP
+          - containerPort: 6261
+            protocol: UDP
+          - containerPort: 6262
+            protocol: UDP
+          - containerPort: 6263
+            protocol: UDP
+          - containerPort: 6264
+            protocol: UDP
+          - containerPort: 6265
+            protocol: UDP
+          - containerPort: 6266
+            protocol: UDP
+          - containerPort: 6267
+            protocol: UDP
+          - containerPort: 6268
+            protocol: UDP
+          - containerPort: 6269
+            protocol: UDP
+          - containerPort: 6270
+            protocol: UDP
+          - containerPort: 6271
+            protocol: UDP
+          - containerPort: 6272
+            protocol: UDP
+          - containerPort: 6273
+            protocol: UDP
+          - containerPort: 6274
+            protocol: UDP
+          - containerPort: 6275
+            protocol: UDP
+          - containerPort: 6276
+            protocol: UDP
+          - containerPort: 6277
+            protocol: UDP
+          - containerPort: 6278
+            protocol: UDP
+          - containerPort: 6279
+            protocol: UDP
+          - containerPort: 6280
+            protocol: UDP
+          - containerPort: 6281
+            protocol: UDP
+          - containerPort: 6282
+            protocol: UDP
+          - containerPort: 6283
+            protocol: UDP
+          - containerPort: 6284
+            protocol: UDP
+          - containerPort: 6285
+            protocol: UDP
+          - containerPort: 6286
+            protocol: UDP
+          - containerPort: 6287
+            protocol: UDP
+          - containerPort: 6288
+            protocol: UDP
+          - containerPort: 6289
+            protocol: UDP
+          - containerPort: 6290
+            protocol: UDP
+          - containerPort: 6291
+            protocol: UDP
+          - containerPort: 6292
+            protocol: UDP
+          - containerPort: 6293
+            protocol: UDP
+          - containerPort: 6294
+            protocol: UDP
+          - containerPort: 6295
+            protocol: UDP
+          - containerPort: 6296
+            protocol: UDP
+          - containerPort: 6297
+            protocol: UDP
+          - containerPort: 6298
+            protocol: UDP
+          - containerPort: 6299
+            protocol: UDP
+      imagePullSecrets:
+        - name: swifarmkey

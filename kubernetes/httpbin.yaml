@@ -1,0 +1,39 @@
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: httpbin
+  labels:
+    app: httpbin-app
+spec:
+  type: LoadBalancer
+  ports:
+  - name: "80"
+    port: 80
+    targetPort: 80
+  selector:
+    app: httpbin-app
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpbin-deployment
+  labels:
+    app: httpbin-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: httpbin-app
+  template:
+    metadata:
+      labels:
+        app: httpbin-app
+    spec:
+      containers:
+      - image: kennethreitz/httpbin
+        name: httpbin
+        ports:
+        - containerPort: 80
+      restartPolicy: Always

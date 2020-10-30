@@ -1,0 +1,23 @@
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+
+[req_distinguished_name]
+C = CA
+ST = BC
+L = Richmond
+O = Sierra Wireless Inc
+OU = flake.legato
+CN = flake.legato.sierrawireless.local
+
+[v3_req]
+keyUsage = keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = flake.legato
+DNS.2 = flake.legato.sierrawireless.local
+DNS.3 = *.flake.legato
+DNS.4 = *.flake.legato.sierrawireless.local

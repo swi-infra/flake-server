@@ -1,0 +1,215 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flake-filter-service-tcp
+  labels:
+    app: flake-filter
+spec:
+  type: LoadBalancer
+  selector:
+    app: flake-filter
+  ports:
+    - name: "80"
+      port: 80
+      targetPort: 80
+    - name: "443"
+      port: 443
+      targetPort: 443
+    - name: "2000"
+      port: 2000
+      targetPort: 2000
+    - name: "2001"
+      port: 2001
+      targetPort: 2001
+    - name: "2002"
+      port: 2002
+      targetPort: 2002
+    - name: "2003"
+      port: 2003
+      targetPort: 2003
+    - name: "2004"
+      port: 2004
+      targetPort: 2004
+    - name: "2005"
+      port: 2005
+      targetPort: 2005
+    - name: "2006"
+      port: 2006
+      targetPort: 2006
+    - name: "2007"
+      port: 2007
+      targetPort: 2007
+    - name: "2008"
+      port: 2008
+      targetPort: 2008
+    - name: "2009"
+      port: 2009
+      targetPort: 2009
+    - name: "2010"
+      port: 2010
+      targetPort: 2010
+    - name: "3000"
+      port: 3000
+      targetPort: 3000
+    - name: "3001"
+      port: 3001
+      targetPort: 3001
+    - name: "3002"
+      port: 3002
+      targetPort: 3002
+    - name: "3003"
+      port: 3003
+      targetPort: 3003
+    - name: "3004"
+      port: 3004
+      targetPort: 3004
+    - name: "3005"
+      port: 3005
+      targetPort: 3005
+    - name: "3006"
+      port: 3006
+      targetPort: 3006
+    - name: "3007"
+      port: 3007
+      targetPort: 3007
+    - name: "3008"
+      port: 3008
+      targetPort: 3008
+    - name: "3009"
+      port: 3009
+      targetPort: 3009
+    - name: "3010"
+      port: 3010
+      targetPort: 3010
+    - name: "5000"
+      port: 5000
+      targetPort: 5000
+    - name: "5001"
+      port: 5001
+      targetPort: 5001
+    - name: "5002"
+      port: 5002
+      targetPort: 5002
+    - name: "5003"
+      port: 5003
+      targetPort: 5003
+    - name: "5004"
+      port: 5004
+      targetPort: 5004
+    - name: "5005"
+      port: 5005
+      targetPort: 5005
+    - name: "5006"
+      port: 5006
+      targetPort: 5006
+    - name: "5007"
+      port: 5007
+      targetPort: 5007
+    - name: "5008"
+      port: 5008
+      targetPort: 5008
+    - name: "5009"
+      port: 5009
+      targetPort: 5009
+    - name: "5010"
+      port: 5010
+      targetPort: 5010
+    - name: "6000"
+      port: 6000
+      targetPort: 6000
+    - name: "6001"
+      port: 6001
+      targetPort: 6001
+    - name: "6002"
+      port: 6002
+      targetPort: 6002
+    - name: "6003"
+      port: 6003
+      targetPort: 6003
+    - name: "6004"
+      port: 6004
+      targetPort: 6004
+    - name: "6005"
+      port: 6005
+      targetPort: 6005
+    - name: "6006"
+      port: 6006
+      targetPort: 6006
+    - name: "6007"
+      port: 6007
+      targetPort: 6007
+    - name: "6008"
+      port: 6008
+      targetPort: 6008
+    - name: "6009"
+      port: 6009
+      targetPort: 6009
+    - name: "6010"
+      port: 6010
+      targetPort: 6010
+    - name: "6050"
+      port: 6050
+      targetPort: 6050
+    - name: "6051"
+      port: 6051
+      targetPort: 6051
+    - name: "6052"
+      port: 6052
+      targetPort: 6052
+    - name: "6053"
+      port: 6053
+      targetPort: 6053
+    - name: "6054"
+      port: 6054
+      targetPort: 6054
+    - name: "6055"
+      port: 6055
+      targetPort: 6055
+    - name: "6056"
+      port: 6056
+      targetPort: 6056
+    - name: "6057"
+      port: 6057
+      targetPort: 6057
+    - name: "6058"
+      port: 6058
+      targetPort: 6058
+    - name: "6059"
+      port: 6059
+      targetPort: 6059
+    - name: "6060"
+      port: 6060
+      targetPort: 6060
+    - name: "6250"
+      port: 6250
+      targetPort: 6250
+    - name: "6251"
+      port: 6251
+      targetPort: 6251
+    - name: "6252"
+      port: 6252
+      targetPort: 6252
+    - name: "6253"
+      port: 6253
+      targetPort: 6253
+    - name: "6254"
+      port: 6254
+      targetPort: 6254
+    - name: "6255"
+      port: 6255
+      targetPort: 6255
+    - name: "6256"
+      port: 6256
+      targetPort: 6256
+    - name: "6257"
+      port: 6257
+      targetPort: 6257
+    - name: "6258"
+      port: 6258
+      targetPort: 6258
+    - name: "6259"
+      port: 6259
+      targetPort: 6259
+    - name: "6260"
+      port: 6260
+      targetPort: 6260

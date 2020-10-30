@@ -1,0 +1,150 @@
+#Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ftpd-server-deployment
+  labels:
+    app: ftpd-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ftpd-server
+  template:
+    metadata:
+      labels:
+        app: ftpd-server
+    spec:
+      volumes:
+      - name: ftpd-secret
+        secret:
+          secretName: ftpd-secret
+      containers:
+      - env:
+        - name: FTP_USER_HOME
+          value: /home/username
+        - name: FTP_USER_NAME
+          value: user
+        - name: FTP_USER_PASS
+          value: l3g4t0_123
+        - name: PUBLICHOST
+          value: 10.1.60.147
+        - name: FTP_MAX_CLIENTS
+          value: "25"
+        - name: FTP_MAX_CONNECTIONS
+          value: "10"
+        - name: FTP_PASSIVE_PORTS
+          value: "30000:30049"
+        volumeMounts:
+        - name: ftpd-secret
+          mountPath: "/etc/ssl/private/"
+          readOnly: true
+        image: stilliard/pure-ftpd:hardened
+        imagePullPolicy: ""
+        name: ftpd-server
+        ports:
+        - containerPort: 21
+          hostPort: 21
+        - containerPort: 20
+          hostPort: 20
+        - containerPort: 30000
+          hostPort: 30000
+        - containerPort: 30001
+          hostPort: 30001
+        - containerPort: 30002
+          hostPort: 30002
+        - containerPort: 30003
+          hostPort: 30003
+        - containerPort: 30004
+          hostPort: 30004
+        - containerPort: 30005
+          hostPort: 30005
+        - containerPort: 30006
+          hostPort: 30006
+        - containerPort: 30007
+          hostPort: 30007
+        - containerPort: 30008
+          hostPort: 30008
+        - containerPort: 30009
+          hostPort: 30009
+        - containerPort: 30010
+          hostPort: 30010
+        - containerPort: 30011
+          hostPort: 30011
+        - containerPort: 30012
+          hostPort: 30012
+        - containerPort: 30013
+          hostPort: 30013
+        - containerPort: 30014
+          hostPort: 30014
+        - containerPort: 30015
+          hostPort: 30015
+        - containerPort: 30016
+          hostPort: 30016
+        - containerPort: 30017
+          hostPort: 30017
+        - containerPort: 30018
+          hostPort: 30018
+        - containerPort: 30019
+          hostPort: 30019
+        - containerPort: 30020
+          hostPort: 30020
+        - containerPort: 30021
+          hostPort: 30021
+        - containerPort: 30022
+          hostPort: 30022
+        - containerPort: 30023
+          hostPort: 30023
+        - containerPort: 30024
+          hostPort: 30024
+        - containerPort: 30025
+          hostPort: 30025
+        - containerPort: 30026
+          hostPort: 30026
+        - containerPort: 30027
+          hostPort: 30027
+        - containerPort: 30028
+          hostPort: 30028
+        - containerPort: 30029
+          hostPort: 30029
+        - containerPort: 30030
+          hostPort: 30030
+        - containerPort: 30031
+          hostPort: 30031
+        - containerPort: 30032
+          hostPort: 30032
+        - containerPort: 30033
+          hostPort: 30033
+        - containerPort: 30034
+          hostPort: 30034
+        - containerPort: 30035
+          hostPort: 30035
+        - containerPort: 30036
+          hostPort: 30036
+        - containerPort: 30037
+          hostPort: 30037
+        - containerPort: 30038
+          hostPort: 30038
+        - containerPort: 30039
+          hostPort: 30039
+        - containerPort: 30040
+          hostPort: 30040
+        - containerPort: 30041
+          hostPort: 30041
+        - containerPort: 30042
+          hostPort: 30042
+        - containerPort: 30043
+          hostPort: 30043
+        - containerPort: 30044
+          hostPort: 30044
+        - containerPort: 30045
+          hostPort: 30045
+        - containerPort: 30046
+          hostPort: 30046
+        - containerPort: 30047
+          hostPort: 30047
+        - containerPort: 30048
+          hostPort: 30048
+        - containerPort: 30049
+          hostPort: 30049
+      nodeName: carmd-er-lxtbd4bed9b5df59
