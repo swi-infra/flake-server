@@ -15,7 +15,7 @@ def tcp_handle(client_sock, address):
         try:
             data = client_sock.recv(max_buffer)
             if data:
-                flog.debug("Received TCP data")
+                flog.debug("Received TCP data: %s" % data)
                 client_sock.send(data)
             if not data:
                 client_sock.close()
@@ -45,8 +45,12 @@ class EchoServer:
         while True:
             data, addr = self.udp_server.recvfrom(max_buffer)
             if data:
-                flog.debug("Received UDP data")
-                self.udp_server.sendto(data, addr)
+                if data == b'0 byte test':
+                    flog.debug("Received 0 byte test")
+                    self.udp_server.sendto(b'', addr)
+                else:
+                    flog.debug("Received UDP data: %s" % data)
+                    self.udp_server.sendto(data, addr)
             if not data:
                 self.udp_server.close()
 
