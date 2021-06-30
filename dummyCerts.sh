@@ -28,4 +28,9 @@ openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 300 \
     -out $data_path/conf/live/$domain/fullchain.pem \
     -subj "/CN=localhost"
 
+openssl ecparam -out $data_path/conf/live/ecdsa_flake/privkey.pem -name secp256r1 -genkey
+openssl req -new -key $data_path/conf/live/ecdsa_flake/privkey.pem -x509 -nodes -days 300 \
+    -out $data_path/conf/live/ecdsa_flake/fullchain.pem \
+    -subj "/CN=localhost"
+
 exit
