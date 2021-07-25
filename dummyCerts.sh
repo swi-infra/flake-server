@@ -22,6 +22,7 @@ fi
 
 echo "Creating dummy certificate for $domain..."
 mkdir -p "$data_path/conf/live/$domain"
+mkdir -p "$data_path/conf/live/ecdsa_flake"
 
 openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 300 \
     -keyout $data_path/conf/live/$domain/privkey.pem \

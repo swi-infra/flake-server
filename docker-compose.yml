@@ -88,5 +88,9 @@ services:
       FTP_USER_NAME: "user"
       FTP_USER_PASS: "pass"
       FTP_USER_HOME: "/home/username"
+      TLS_CN: "0.0.0.0"
+      TLS_ORG: "Sierra Wireless"
+      TLS_C: "CA"
+      ADDED_FLAGS: "--tls=1 -d"
 networks:
   nginx-proxy:
