@@ -26,6 +26,9 @@
     "port": "6250",
     "CAroot": "/tools/host/resources/Client_Auth_Certs/ca-chain.cert.pem"
   },
+  "tcp_client": {
+    "port": "6300"
+  },
   "iperf": {
     "log": "$FLAKE_SERVER/logs/iperf3.log"
   },

@@ -1,1 +1,0 @@
-python3 $FLAKE_TOOLS/host/tcp_client.py "$@"
