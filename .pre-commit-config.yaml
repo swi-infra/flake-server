@@ -32,7 +32,7 @@ repos:
     hooks:
       - id: flake8
         args:
-          - --ignore=W503,E501,E203
+          - --ignore=W503,W605,E501,E203
           - --max-line-length=89
   - repo: https://github.com/prettier/prettier
     rev: "2.0.5"

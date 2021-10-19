@@ -26,7 +26,7 @@
     "port": "6250",
     "CAroot": "/tools/host/resources/Client_Auth_Certs/ca-chain.cert.pem"
   },
-  "tcp_client": {
+  "dynamic_http": {
     "port": "6300"
   },
   "tcp_kill_server": {

@@ -60,8 +60,8 @@ class Server:
             assert self.start_tcp_tls_server(), "failed to start TCP TLS server."
             flog.info("---- Successfully started TCP TLS Echo server  ----")
             assert (
-                self.start_http_tcp_client_server()
-            ), "failed to start http TCP client server."
+                self.start_dynamic_http_server()
+            ), "failed to start dynamic http server."
             flog.info("---- Successfully started http TCP client server  ----")
         assert self.configure_pcap(), "failed to start pcap."
         flog.info("---- Successfully started pcap on server ----")
@@ -102,12 +102,12 @@ class Server:
         flog.debug("Starting tcp tls echo server with: {}".format(cmd))
         return os.system(cmd) == 0
 
-    def start_http_tcp_client_server(self):
-        """Start http tcp client server as background process."""
-        script_path = os.path.join(self.server_tools, "host/tcp_client.py")
-        log_file = os.path.join(self.server_root, "logs/tcp_client.log")
+    def start_dynamic_http_server(self):
+        """Start dynamic http server as background process."""
+        script_path = os.path.join(self.server_tools, "host/dynamic_http.py")
+        log_file = os.path.join(self.server_root, "logs/dynamic_http.log")
         cmd = "python3 -u {} > {} 2>&1 &".format(script_path, log_file)
-        flog.debug("Starting http tcp client server with: {}".format(cmd))
+        flog.debug("Starting dynamic http server with: {}".format(cmd))
         return os.system(cmd) == 0
 
     def configure_iperf(self):
