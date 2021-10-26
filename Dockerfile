@@ -29,6 +29,7 @@ RUN apt-get update && \
 COPY docker/10-flake-env.sh /docker-entrypoint.d/
 
 # Install python dependencies
+RUN python3 -m pip install --upgrade pip
 COPY tools/host/requirements.txt /tools/host/requirements.txt
 RUN python3 -m pip install --no-cache-dir -r /tools/host/requirements.txt
 
@@ -71,4 +72,5 @@ EXPOSE 21/tcp \
        6050-6099/tcp \
        6150-6199/tcp \
        6250-6299/tcp \
-       6300/tcp
+       6300/tcp \
+       7050-7052/tcp

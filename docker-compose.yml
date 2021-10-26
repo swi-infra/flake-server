@@ -93,5 +93,21 @@ services:
       TLS_ORG: "Sierra Wireless"
       TLS_C: "CA"
       ADDED_FLAGS: "--tls=1 -d"
+    networks:
+      - nginx-proxy
+
+  mqtt-server:
+    container_name: mqtt-server
+    image: eclipse-mosquitto:1.6
+    ports:
+      - "7050-7052:7050-7052"
+    volumes:
+      - "./mqtt:/mosquitto"
+      - "./certs/conf:/etc/letsencrypt:ro"
+    expose:
+      - "7050-7052"
+    networks:
+      - nginx-proxy
+
 networks:
   nginx-proxy:
