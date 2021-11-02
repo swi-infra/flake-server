@@ -98,14 +98,15 @@ services:
 
   mqtt-server:
     container_name: mqtt-server
-    image: eclipse-mosquitto:1.6
+    image: eclipse-mosquitto
     ports:
-      - "7050-7052:7050-7052"
+      - "1883-1884:1883-1884"
+      - "8883-8884:8883-8884"
     volumes:
       - "./mqtt:/mosquitto"
-      - "./certs/conf:/etc/letsencrypt:ro"
     expose:
-      - "7050-7052"
+      - "1883-1884"
+      - "8883-8884"
     networks:
       - nginx-proxy
 
