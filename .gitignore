@@ -25,3 +25,11 @@ __pycache__
 # Nginx
 nginx/logs/*
 certs/
+
+# Mqtt
+mqtt/certs/
+mqtt/*.pid
+
+# Ftp
+ftp/
+
