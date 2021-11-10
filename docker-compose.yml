@@ -3,11 +3,10 @@ version: "3"
 
 services:
   filter:
-    build: .
-#    build:
-#      context: .
-#      args:
-#        - DEV_BUILD=1
+    build:
+      context: .
+      args:
+        - DEV_BUILD=1
     image: $USER/nginx-xtra
     privileged: true
     #command: "bash -c '/docker-entrypoint.d/10-flake-env.sh && tail -f /dev/null'"
