@@ -1,7 +1,7 @@
 FROM nginx:1.19.1
 
-#ARG DEV_BUILD
-#RUN if [ "${DEV_BUILD}" = "1" ]; then echo "Building in dev mode..."; fi
+ARG DEV_BUILD
+RUN if [ "${DEV_BUILD}" = "1" ]; then echo "Building in dev mode..."; fi
 
 # Set timezone
 ENV TZ=Canada/Pacific
