@@ -213,3 +213,9 @@ spec:
     - name: "6260"
       port: 6260
       targetPort: 6260
+    - name: "6300"
+      port: 6300
+      targetPort: 6300
+    - name: "6301"
+      port: 6301
+      targetPort: 6301

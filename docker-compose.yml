@@ -3,7 +3,10 @@ version: "3"
 
 services:
   filter:
-    build: .
+    build:
+      context: .
+      args:
+        - DEV_BUILD=1
     image: $USER/nginx-xtra
     privileged: true
     #command: "bash -c '/docker-entrypoint.d/10-flake-env.sh && tail -f /dev/null'"
@@ -35,6 +38,8 @@ services:
       - "6050-6099:6050-6099"
       - "6150-6199:6150-6199"
       - "6250-6299:6250-6299"
+      - "6300:6300"
+      - "6301:6301"
     environment:
       - FILTER=1
       - SERVICES=0
@@ -88,5 +93,26 @@ services:
       FTP_USER_NAME: "user"
       FTP_USER_PASS: "pass"
       FTP_USER_HOME: "/home/username"
+      TLS_CN: "0.0.0.0"
+      TLS_ORG: "Sierra Wireless"
+      TLS_C: "CA"
+      ADDED_FLAGS: "--tls=1 -d"
+    networks:
+      - nginx-proxy
+
+  mqtt-server:
+    container_name: mqtt-server
+    image: eclipse-mosquitto
+    ports:
+      - "1883-1884:1883-1884"
+      - "8883-8884:8883-8884"
+    volumes:
+      - "./mqtt:/mosquitto"
+    expose:
+      - "1883-1884"
+      - "8883-8884"
+    networks:
+      - nginx-proxy
+
 networks:
   nginx-proxy:

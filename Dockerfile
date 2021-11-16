@@ -1,5 +1,8 @@
 FROM nginx:1.19.1
 
+ARG DEV_BUILD
+RUN if [ "${DEV_BUILD}" = "1" ]; then echo "Building in dev mode..."; fi
+
 # Set timezone
 ENV TZ=Canada/Pacific
 
@@ -29,6 +32,7 @@ RUN apt-get update && \
 COPY docker/10-flake-env.sh /docker-entrypoint.d/
 
 # Install python dependencies
+RUN python3 -m pip install --upgrade pip
 COPY tools/host/requirements.txt /tools/host/requirements.txt
 RUN python3 -m pip install --no-cache-dir -r /tools/host/requirements.txt
 
@@ -43,6 +47,9 @@ COPY tools /tools/
 COPY nginx/conf/nginx.conf /etc/nginx/
 COPY nginx/public/ /usr/share/nginx/public
 RUN mkdir -p /usr/share/nginx/logs
+RUN if [ "${DEV_BUILD}" = "1" ]; then \
+    sed -i "s/proxy_pass http:\/\/httpbin:80;/set $upstream http:\/\/httpbin:80;\nproxy_pass $upstream;/g" /etc/nginx/nginx.conf; \
+fi
 
 EXPOSE 21/tcp \
        80/tcp \
@@ -70,4 +77,8 @@ EXPOSE 21/tcp \
        6200-6249/udp \
        6050-6099/tcp \
        6150-6199/tcp \
-       6250-6299/tcp
+       6250-6299/tcp \
+       6300/tcp \
+       6301/tcp \
+       1883-1884/tcp \
+       8883-8884/tcp

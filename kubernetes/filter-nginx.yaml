@@ -81,6 +81,9 @@ data:
                     text/plain log;
                 }
             }
+            location /dynamic {
+                proxy_pass  http://flake.legato:6300/;
+            }
 
             # redirect server error pages to the static page /50x.html
             error_page 500 502 503 504 /50x.html;

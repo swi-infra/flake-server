@@ -1411,6 +1411,8 @@ spec:
           - containerPort: 6297
           - containerPort: 6298
           - containerPort: 6299
+          - containerPort: 6300
+          - containerPort: 6301
 # 6000 UDP range
           - containerPort: 6000
             protocol: UDP

@@ -214,6 +214,12 @@ spec:
     - name: "6260"
       port: 6260
       targetPort: 6260
+    - name: "6300"
+      port: 6300
+      targetPort: 6300
+    - name: "6301"
+      port: 6301
+      targetPort: 6301
 ---
 # Deployment
 apiVersion: apps/v1
@@ -1632,6 +1638,8 @@ spec:
           - containerPort: 6297
           - containerPort: 6298
           - containerPort: 6299
+          - containerPort: 6300
+          - containerPort: 6301
 # 6000 UDP range
           - containerPort: 6000
             protocol: UDP
