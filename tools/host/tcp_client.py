@@ -47,7 +47,6 @@ class EchoClient:
                 data += sock.recv(MAX_BUFFER)
                 got_data = data != b""
                 flog.debug("Data part received length: %d" % len(data))
-                # time.sleep(1)
                 break
             else:
                 if got_data:
@@ -59,6 +58,18 @@ class EchoClient:
         flog.info("Received message of length: %s bytes" % len(data))
         return data
 
+    def check_message(self, message):
+        "Check if message has command encoded."
+        try:
+            data_str = message.decode("utf-8")
+            flog.debug(data_str)
+            if "close" in data_str:
+                flog.info("Received close command")
+                return "close"
+        except Exception:
+            pass
+        return ""
+
     def run(self):
         """Run TCP client."""
         flog.info("Connecting to tcp server at {}:{}".format(self.address, self.port))
@@ -68,14 +79,14 @@ class EchoClient:
             try:
                 if self.echo:
                     data = self.receive()
-                    if not data:
+                    if not data or self.check_message(data) == "close":
                         self.tcp_client.close()
                         break
                     self.send(data)
                 else:
                     self.send(self.message.encode())
                     data = self.receive()
-                    if not data:
+                    if not data or self.check_message(data) == "close":
                         self.tcp_client.close()
                         break
             except Exception as ex:
