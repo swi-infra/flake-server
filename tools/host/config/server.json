@@ -14,11 +14,11 @@
   },
   "tcp_udp": {
     "port": "6000",
-    "timeout": "120"
+    "timeout": "240"
   },
   "tcp_tls": {
     "port": "6050",
-    "timeout": "120",
+    "timeout": "240",
     "fullchain": "/etc/letsencrypt/live/flake.legato.io/fullchain.pem",
     "privkey": "/etc/letsencrypt/live/flake.legato.io/privkey.pem"
   },

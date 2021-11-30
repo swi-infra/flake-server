@@ -3,13 +3,13 @@
 import _thread
 import flog
 from config_handler import ServerConfig
-from tcp_client import EchoClient
+from echo_client import EchoClient
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import cgi
 
 
 DEFAULT_TIMEOUT = 120
-SERVICES = ["tcp_client"]
+SERVICES = ["tcp_client", "udp_client"]
 
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -82,7 +82,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 "echo": form.getvalue("echo", False),
             }
             flog.info(request_vals)
-            if service == "tcp_client" and not (
+            if service in ["tcp_client", "udp_client"] and not (
                 request_vals["address"]
                 and request_vals["port"]
                 and request_vals["port"].isdigit()
@@ -92,20 +92,22 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.wfile.write(bad_request_str)
                 return
 
-            if service == "tcp_client":
-                self._set_headers(200)
-                self.wfile.write(
-                    b"<html><body><h1>Request Received, starting tcp client!</h1></body></html>"
-                )
+            if service in ["tcp_client", "udp_client"]:
                 echo_client = EchoClient(
                     address=request_vals["address"],
                     port=int(request_vals["port"]),
                     message=request_vals["message"],
                     echo=request_vals["echo"],
+                    mode="TCP" if service == "tcp_client" else "UDP",
                     timeout=DEFAULT_TIMEOUT,
                 )
-                flog.info("Starting tcp thread.")
+                flog.info(f"Starting {service} thread.")
                 _thread.start_new_thread(echo_client.run, ())
+                self._set_headers(200)
+                self.wfile.write(
+                    b"<html><body><h1>Request Received, starting %s!</h1></body></html>"
+                    % service.encode()
+                )
         except Exception as e:
             self._set_headers(400)
             self.wfile.write(
@@ -124,7 +126,7 @@ class HttpRequestServer:
         try:
             self.port = int(self.config["dynamic_http"]["port"])
         except (KeyError, ValueError) as e:
-            flog.error("Could not get port for tcp_client.")
+            flog.error("Could not get port for dynamic http server.")
             raise e
         try:
             DEFAULT_TIMEOUT = int(self.config["tcp_udp"]["timeout"])
