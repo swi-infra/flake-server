@@ -23,7 +23,7 @@ class EchoClient:
         self.address = address
         self.port = port
         self.message = message
-        self.echo = echo
+        self.echo = True if echo in ["True", "true", "T", "t", "1", 1] else False
         self.timeout = timeout
         self.tcp_client = socket(AF_INET, SOCK_STREAM)
         self.tcp_client.settimeout(self.timeout)
