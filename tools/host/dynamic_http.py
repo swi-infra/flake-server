@@ -9,6 +9,7 @@ import cgi
 
 
 DEFAULT_TIMEOUT = 120
+LOCAL_PORT_UDP = 50000
 SERVICES = ["tcp_client", "udp_client"]
 
 
@@ -63,7 +64,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         """Start TCP client from request."""
-        global DEFAULT_TIMEOUT, SERVICES, SERVERS
+        global DEFAULT_TIMEOUT, SERVICES, LOCAL_PORT_UDP
         bad_request_str = b"<html><body><h1>Bad Request!</h1></body></html>"
         try:
             form = cgi.FieldStorage(
@@ -91,7 +92,10 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self._set_headers(400)
                 self.wfile.write(bad_request_str)
                 return
-
+            local_port = None
+            if service == "udp_client":
+                LOCAL_PORT_UDP += 1
+                local_port = LOCAL_PORT_UDP
             if service in ["tcp_client", "udp_client"]:
                 echo_client = EchoClient(
                     address=request_vals["address"],
@@ -99,6 +103,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                     message=request_vals["message"],
                     echo=request_vals["echo"],
                     mode="TCP" if service == "tcp_client" else "UDP",
+                    local_port=local_port,
                     timeout=DEFAULT_TIMEOUT,
                 )
                 flog.info(f"Starting {service} thread.")

@@ -18,6 +18,7 @@ class EchoClient:
         message="Hello from Flake Client!",
         echo=False,
         mode="tcp",
+        local_port=None,
         timeout=DEFAULT_TIMEOUT,
     ):
         """Initialize TCP/UDP server."""
@@ -26,6 +27,7 @@ class EchoClient:
         self.message = message
         self.echo = True if echo in ["True", "true", "T", "t", "1", 1] else False
         self.mode = mode.upper()
+        self.local_port = local_port
         self.timeout = timeout
 
     def send(self, data):
@@ -100,6 +102,7 @@ class EchoClient:
         self.client.settimeout(self.timeout)
         data = self.message.encode()
         addr = (self.address, self.port)
+        self.client.bind(("0.0.0.0", self.local_port))
 
         while True:
             if not self.echo:
