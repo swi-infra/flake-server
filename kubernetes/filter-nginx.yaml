@@ -82,7 +82,7 @@ data:
                 }
             }
             location /dynamic {
-                proxy_pass  http://flake.legato:6300/;
+                proxy_pass  http://127.0.0.1:6300/;
             }
 
             # redirect server error pages to the static page /50x.html
