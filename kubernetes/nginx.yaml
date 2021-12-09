@@ -112,9 +112,9 @@ data:
             ssl_prefer_server_ciphers on;
 
             location / {
-                proxy_pass http://httpbin:80;
-                # set $upstream http://httpbin:80;
-                # proxy_pass $upstream;
+                # proxy_pass http://httpbin:80;
+                set $upstream http://httpbin:80;
+                proxy_pass $upstream;
             }
         }
     }
