@@ -73,6 +73,8 @@ openssl x509 -req -in $data_path/../mqtt/certs/live/mqtt_flake/client.csr \
     -out $data_path/../mqtt/certs/live/mqtt_flake/client.crt -days 300  -passin pass:"...."
 openssl rsa -in $data_path/../mqtt/certs/live/mqtt_flake/client.key -out $data_path/../mqtt/certs/live/mqtt_flake/client.key
 
+cp -r $data_path/../mqtt/certs/live/mqtt_flake/ $data_path/conf/live/
+
 chown -R 1883:1883 $data_path/../mqtt/certs
 
 exit
