@@ -140,7 +140,7 @@ class HttpRequestServer:
                 "Could not use specified timeout, using default value: %d"
                 % DEFAULT_TIMEOUT
             )
-        self.address = ("localhost", self.port)
+        self.address = ("0.0.0.0", self.port)
 
     def run(self):
         """Run http server."""
