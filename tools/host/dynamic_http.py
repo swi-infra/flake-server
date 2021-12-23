@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import cgi
 
 
-DEFAULT_TIMEOUT = 120
+DEFAULT_TIMEOUT = 240
 LOCAL_PORT_UDP = 50000
 SERVICES = ["tcp_client", "udp_client"]
 
