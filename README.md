@@ -56,7 +56,8 @@ To get a local dev environment:
 
   ```sh
   ./dummyCerts.sh
-  docker-compose up
+  sudo docker build -t root/nginx-xtra . --build-arg DEV_BUILD=1
+  sudo docker-compose up
   ```
 
 This should make the services available locally, on the ports exposed by your machine.
