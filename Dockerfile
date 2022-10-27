@@ -10,6 +10,8 @@ ENV TZ=Canada/Pacific
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
     nginx-extras \
+    logrotate \
+    gzip \
     iptables \
     iproute2 \
     build-essential \
@@ -45,6 +47,7 @@ COPY tools /tools/
 
 # Add nginx conf * public
 COPY nginx/conf/nginx.conf /etc/nginx/
+COPY nginx/conf/nginx_logrotate.conf /etc/logrotate.d/nginx
 COPY nginx/public/ /usr/share/nginx/public
 RUN mkdir -p /usr/share/nginx/logs
 RUN if [ "${DEV_BUILD}" = "1" ]; then \
