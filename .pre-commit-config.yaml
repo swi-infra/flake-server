@@ -27,8 +27,8 @@ repos:
     rev: 19.3b0
     hooks:
       - id: black
-  - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.7.7
+  - repo: https://github.com/PyCQA/flake8
+    rev: 5.0.4
     hooks:
       - id: flake8
         args:
