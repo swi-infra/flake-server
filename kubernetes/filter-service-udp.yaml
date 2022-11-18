@@ -141,3 +141,91 @@ spec:
       port: 6010
       targetPort: 6010
       protocol: UDP
+    - name: "7000"
+      port: 7000
+      targetPort: 7000
+      protocol: UDP
+    - name: "7001"
+      port: 7001
+      targetPort: 7001
+      protocol: UDP
+    - name: "7002"
+      port: 7002
+      targetPort: 7002
+      protocol: UDP
+    - name: "7003"
+      port: 7003
+      targetPort: 7003
+      protocol: UDP
+    - name: "7004"
+      port: 7004
+      targetPort: 7004
+      protocol: UDP
+    - name: "7005"
+      port: 7005
+      targetPort: 7005
+      protocol: UDP
+    - name: "7006"
+      port: 7006
+      targetPort: 7006
+      protocol: UDP
+    - name: "7007"
+      port: 7007
+      targetPort: 7007
+      protocol: UDP
+    - name: "7008"
+      port: 7008
+      targetPort: 7008
+      protocol: UDP
+    - name: "7009"
+      port: 7009
+      targetPort: 7009
+      protocol: UDP
+    - name: "7010"
+      port: 7010
+      targetPort: 7010
+      protocol: UDP
+    - name: "7050"
+      port: 7050
+      targetPort: 7050
+      protocol: UDP
+    - name: "7051"
+      port: 7051
+      targetPort: 7051
+      protocol: UDP
+    - name: "7052"
+      port: 7052
+      targetPort: 7052
+      protocol: UDP
+    - name: "7053"
+      port: 7053
+      targetPort: 7053
+      protocol: UDP
+    - name: "7054"
+      port: 7054
+      targetPort: 7054
+      protocol: UDP
+    - name: "7055"
+      port: 7055
+      targetPort: 7055
+      protocol: UDP
+    - name: "7056"
+      port: 7056
+      targetPort: 7056
+      protocol: UDP
+    - name: "7057"
+      port: 7057
+      targetPort: 7057
+      protocol: UDP
+    - name: "7058"
+      port: 7058
+      targetPort: 7058
+      protocol: UDP
+    - name: "7059"
+      port: 7059
+      targetPort: 7059
+      protocol: UDP
+    - name: "7060"
+      port: 7060
+      targetPort: 7060
+      protocol: UDP
