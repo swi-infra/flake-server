@@ -15,8 +15,8 @@
   "dtls": {
     "port": "7000",
     "timeout": "240",
-    "fullchain": "/etc/letsencrypt/live/flake.legato.io/fullchain.pem",
-    "privkey": "/etc/letsencrypt/live/flake.legato.io/privkey.pem",
+    "fullchain": "/etc/letsencrypt/live/flake.aws.legato.io/fullchain.pem",
+    "privkey": "/etc/letsencrypt/live/flake.aws.legato.io/privkey.pem",
     "buffer": "1024"
   },
   "dtls_echo": {
@@ -30,8 +30,8 @@
   "tcp_tls": {
     "port": "6050",
     "timeout": "240",
-    "fullchain": "/etc/letsencrypt/live/flake.legato.io/fullchain.pem",
-    "privkey": "/etc/letsencrypt/live/flake.legato.io/privkey.pem"
+    "fullchain": "/etc/letsencrypt/live/flake.aws.legato.io/fullchain.pem",
+    "privkey": "/etc/letsencrypt/live/flake.aws.legato.io/privkey.pem"
   },
   "tcp_tls_mutual": {
     "port": "6250",

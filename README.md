@@ -17,15 +17,15 @@ Each service is exposed over multiple ports, with each port emulating a differen
 _Example_:
 
 - https, 0ms delay, 5% packet loss, binary file, 30MB
-  <https://flake.legato.io:3006/binary/data_30MB.bin>
+  <https://flake.aws.legato.io:3006/binary/data_30MB.bin>
 - http, 200ms delay, 0.5% packet loss, video file, 15MB
-  <http://flake.legato.io:2202/video/data_15MB.avi>
+  <http://flake.aws.legato.io:2202/video/data_15MB.avi>
 - udp, 100ms delay, 2.5% packet loss, audio file, 10MB
-  flake.legato.io:4105
+  flake.aws.legato.io:4105
   udp packet data:
   `audio/data_10MB.wav`
 - iperf, 100ms delay, 2.5% packet loss
-  `iperf -c flake.legato.io -p 5105`
+  `iperf -c flake.aws.legato.io -p 5105`
 
 ## Emulated conditions
 
@@ -107,7 +107,7 @@ The service includes a JavaScript generator that helps to generate links, but th
 
 ##### Logging
 
-There is logging available at flake.legato.io/logs
+There is logging available at flake.aws.legato.io/logs
 
 - `pcap`: packet capture logs are available in two locations. The `services` container pcaps are in pcap/ and the `filter` container pcaps are available in filter/pcap/.
   (control script logs at pcap_manager.log and in pcap_listener/ as well as filter/pcap_manager.log and in filter/pcap_listener/)

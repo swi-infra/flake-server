@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 
-domain=${DOMAIN:-"flake.legato.io"}
+domain=${DOMAIN:-"flake.aws.legato.io"}
 data_path=${DATA_PATH:-"./certs"}
 
 # create dummy certs to allow nginx to start
@@ -23,7 +23,7 @@ fi
 echo "Creating dummy certificate for $domain..."
 mkdir -p "$data_path/conf/live/$domain"
 mkdir -p "$data_path/conf/live/ecdsa_flake"
-mkdir -p "$data_path/conf/live/client-auth.httpbin.legato.io"
+mkdir -p "$data_path/conf/live/client-auth.httpbin.aws.legato.io"
 mkdir -p "$data_path/conf/live/https_certs"
 rm -rf "$data_path/../mqtt/certs"
 mkdir -p "$data_path/../mqtt/certs/live/mqtt_flake/"
@@ -39,8 +39,8 @@ openssl req -new -key $data_path/conf/live/ecdsa_flake/privkey.pem -x509 -nodes 
     -subj "/CN=localhost"
 
 openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 300 \
-    -keyout $data_path/conf/live/client-auth.httpbin.legato.io/privkey.pem \
-    -out $data_path/conf/live/client-auth.httpbin.legato.io/fullchain.pem \
+    -keyout $data_path/conf/live/client-auth.httpbin.aws.legato.io/privkey.pem \
+    -out $data_path/conf/live/client-auth.httpbin.aws.legato.io/fullchain.pem \
     -subj "/CN=localhost"
 
 openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 300 \
