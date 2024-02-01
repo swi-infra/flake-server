@@ -71,6 +71,10 @@
           <option value="https">https</option>
           <option value="udp">udp</option>
           <option value="iperf3">iperf3</option>
+          <option value="iperf3 mirror 1">iperf3 mirror 1</option>
+          <option value="iperf3 mirror 2">iperf3 mirror 2</option>
+          <option value="iperf3 mirror 3">iperf3 mirror 3</option>
+          <option value="iperf3 mirror 4">iperf3 mirror 4</option>
           <option value="tcp/udp echo">tcp/udp echo</option>
         </select>
       </div>
@@ -153,6 +157,10 @@
           https: 3000,
           udp: 4000,
           iperf3: 5000,
+          "iperf3 mirror 1": 5020,
+          "iperf3 mirror 2": 5040,
+          "iperf3 mirror 3": 5060,
+          "iperf3 mirror 4": 5080,
           "tcp/udp echo": 6000,
         };
         let fileExtension = {
@@ -165,19 +173,18 @@
 
         // get scheme
         let scheme = document.getElementById("Scheme").value;
-        if (["udp", "iperf3", "tcp/udp echo"].includes(scheme)) {
-          url += "http";
+        if (["udp", "tcp/udp echo"].includes(scheme)) {
+          url += "http://flake.legato.io:";
+        } else if (scheme.includes("iperf")) {
+          url += "iperf3 -c flake.legato.io -p "
         } else {
-          url += scheme;
+          url += scheme + "://flake.legato.io:";
         }
         port += schemePort[scheme];
-
-        url += "://flake.legato.io:";
-
         port += parseInt(document.getElementById("PacketDelay").value);
         port += parseInt(document.getElementById("PacketLoss").value);
         url += port;
-        if (!["iperf3", "tcp/udp echo"].includes(scheme)) {
+        if (!(scheme.includes("tcp/udp echo") || scheme.includes("iperf3"))) {
           url += "/";
 
           url += document.getElementById("FileType").value;

@@ -33,7 +33,7 @@ class Iperf:
         for loss_set in self.config.values():
             for port_list in loss_set["ports"]:
                 for scheme, port in port_list.items():
-                    if scheme == "iperf":
+                    if scheme.startswith("iperf"):
                         ports.append(port)
         return ports
 
