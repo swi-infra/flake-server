@@ -28,7 +28,7 @@ certs/
 
 # Mqtt
 mqtt/certs/
-mqtt/*.pid
+mqtt/mosquitto.pid
 
 # Ftp
 ftp/

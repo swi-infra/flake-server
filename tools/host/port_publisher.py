@@ -26,11 +26,13 @@ class PortConfiguration:
 
     def parse_config(self):
         """Parse port config file."""
-        ports_data = {"http": {}, "https": {}, "udp": {}, "iperf": {}}
+        ports_data = {}
         for setup in self.config.values():
             loss = setup["packet_loss"]
             for key in ports_data.keys():
-                ports_data[key][loss] = {}
+                ports_data[key] = {
+                    loss: {}
+                }
             for delay, ports in zip(setup["packet_delay"], setup["ports"]):
                 for key in ports_data.keys():
                     ports_data[key][loss][delay] = {"port": ports[key]}

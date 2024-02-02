@@ -10,6 +10,8 @@ ENV TZ=Canada/Pacific
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
     nginx-extras \
+    logrotate \
+    gzip \
     iptables \
     iproute2 \
     build-essential \
@@ -45,6 +47,7 @@ COPY tools /tools/
 
 # Add nginx conf * public
 COPY nginx/conf/nginx.conf /etc/nginx/
+COPY nginx/conf/nginx_logrotate.conf /etc/logrotate.d/nginx
 COPY nginx/public/ /usr/share/nginx/public
 RUN mkdir -p /usr/share/nginx/logs
 RUN if [ "${DEV_BUILD}" = "1" ]; then \
@@ -54,6 +57,7 @@ fi
 EXPOSE 21/tcp \
        80/tcp \
        443/tcp \
+       8443/tcp \
        2000-2049/tcp \
        2100-2149/tcp \
        2200-2249/tcp \
@@ -63,12 +67,12 @@ EXPOSE 21/tcp \
        4000-4049/udp \
        4100-4149/udp \
        4200-4249/udp \
-       5000-5049/tcp \
-       5100-5149/tcp \
-       5200-5249/tcp \
-       5000-5049/udp \
-       5100-5149/udp \
-       5200-5249/udp \
+       5000-5090/tcp \
+       5100-5190/tcp \
+       5200-5290/tcp \
+       5000-5090/udp \
+       5100-5190/udp \
+       5200-5290/udp \
        6000-6049/tcp \
        6100-6149/tcp \
        6200-6249/tcp \
