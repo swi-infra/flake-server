@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xml:lang="en">
   <head>
-    <title>Flake Legato</title>
+    <title>Flake</title>
     <link
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -42,7 +42,7 @@
       <a href="/">
         <img src="/resources/legato.png" alt="legato" />
       </a>
-      <h1 class="display-3">Flake Legato</h1>
+      <h1 class="display-3">Flake</h1>
     </div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -55,7 +55,7 @@
     </nav>
     <p></p>
     <p class="lead">
-      Flake Legato is a tool used to emulate poor network conditions.
+      Flake is a tool used to emulate poor network conditions.
     </p>
     <p class="lead">
       It allows testers to ensure their product can handle these network
@@ -76,6 +76,16 @@
           <option value="iperf3 mirror 3">iperf3 mirror 3</option>
           <option value="iperf3 mirror 4">iperf3 mirror 4</option>
           <option value="tcp/udp echo">tcp/udp echo</option>
+          <option value="tcp tls echo">tcp tls echo</option>
+          <option value="tcp tls mutual auth echo"
+            >tcp tls mutual auth echo</option
+          >
+          <option value="ecdsa tcp tls echo">ecdsa tcp tls echo</option>
+          <option value="ecdsa tcp tls mutual auth echo"
+            >ecdsa tcp tls mutual auth echo</option
+          >
+          <option value="dtls">dtls</option>
+          <option value="dtls echo">dtls echo</option>
         </select>
       </div>
 
@@ -92,22 +102,14 @@
         <label for="PacketLoss">Packet Loss: </label>
         <select id="PacketLoss" class="form-control form-control-md">
           <option value="0">0%</option>
-          <option value="1">0.25%</option>
-          <option value="2">0.5%</option>
-          <option value="3">1%</option>
-          <option value="4">1.5%</option>
-          <option value="5">2.5%</option>
-          <option value="6">5%</option>
-          <option value="7">10%</option>
-          <option value="8">15%</option>
-          <option value="9">25%</option>
-          <option value="10">50%</option>
+          <option value="1">1%</option>
+          <option value="2">15%</option>
+          <option value="3">50%</option>
         </select>
       </div>
 
-      <div class="form-group">
+      <div class="form-group hide-on-condition">
         <label for="FileType">File Type: </label>
-
         <select id="FileType" class="form-control form-control-md">
           <option value="text">text</option>
           <option value="binary">binary</option>
@@ -117,7 +119,7 @@
         </select>
       </div>
 
-      <div class="form-group">
+      <div class="form-group hide-on-condition">
         <label for="FileSize">File Size: </label>
         <select id="FileSize" class="form-control form-control-md">
           <option value="0.5MB">0.5MB</option>
@@ -149,6 +151,27 @@
       </button>
     </div>
     <script>
+      function updateForm(scheme) {
+        if (
+          scheme.includes("tcp") ||
+          scheme.includes("udp") ||
+          scheme.includes("dtls") ||
+          scheme.includes("iperf3")
+        ) {
+          document
+            .querySelectorAll(".form-group.hide-on-condition")
+            .forEach(function (element) {
+              element.style.display = "none";
+            });
+        } else {
+          document
+            .querySelectorAll(".form-group.hide-on-condition")
+            .forEach(function (element) {
+              element.style.display = "block";
+            });
+        }
+      }
+
       function urlBuilder() {
         let port = 0;
         let url = "";
@@ -162,6 +185,12 @@
           "iperf3 mirror 3": 5060,
           "iperf3 mirror 4": 5080,
           "tcp/udp echo": 6000,
+          "tcp tls echo": 6050,
+          "tcp tls mutual auth echo": 6060,
+          "ecdsa tcp tls echo": 6070,
+          "ecdsa tcp tls mutual auth echo": 6080,
+          dtls: 7000,
+          "dtls echo": 7050,
         };
         let fileExtension = {
           text: ".txt",
@@ -173,10 +202,15 @@
 
         // get scheme
         let scheme = document.getElementById("Scheme").value;
-        if (["udp", "tcp/udp echo"].includes(scheme)) {
-          url += "http://flake.legato.io:";
+        updateForm(scheme);
+        if (
+          scheme.includes("tcp") ||
+          scheme.includes("udp") ||
+          scheme.includes("dtls")
+        ) {
+          url += "flake.legato.io:";
         } else if (scheme.includes("iperf")) {
-          url += "iperf3 -c flake.legato.io -p "
+          url += "iperf3 -c flake.legato.io -p ";
         } else {
           url += scheme + "://flake.legato.io:";
         }
@@ -184,7 +218,14 @@
         port += parseInt(document.getElementById("PacketDelay").value);
         port += parseInt(document.getElementById("PacketLoss").value);
         url += port;
-        if (!(scheme.includes("tcp/udp echo") || scheme.includes("iperf3"))) {
+        if (
+          !(
+            scheme.includes("tcp") ||
+            scheme.includes("udp") ||
+            scheme.includes("dtls") ||
+            scheme.includes("iperf3")
+          )
+        ) {
           url += "/";
 
           url += document.getElementById("FileType").value;

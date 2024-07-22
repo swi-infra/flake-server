@@ -21,6 +21,7 @@ class PortConfiguration:
 
     def _clear_port_config(self):
         """Remove data folder tree."""
+        flog.debug("Clearing port config.")
         if os.path.exists(self.port_config):
             os.remove(self.port_config)
 
@@ -29,22 +30,27 @@ class PortConfiguration:
         ports_data = {}
         for setup in self.config.values():
             loss = setup["packet_loss"]
-            for key in ports_data.keys():
-                ports_data[key] = {
-                    loss: {}
-                }
+            services = setup["ports"][0].keys()
+            for key in services:
+                if key not in ports_data.keys():
+                    ports_data[key] = {loss: {}}
+                else:
+                    ports_data[key][loss] = {}
             for delay, ports in zip(setup["packet_delay"], setup["ports"]):
-                for key in ports_data.keys():
-                    ports_data[key][loss][delay] = {"port": ports[key]}
+                for key, val in ports.items():
+                    ports_data[key][loss][delay] = {"port": val}
         return ports_data
 
     def publish(self):
         """Publish ports to file."""
         try:
+            flog.debug("Publishing ports to file.")
+            flog.debug("Ports: {}".format(self.ports))
             with open(self.port_config, "w") as fd:
                 json.dump(self.ports, fd, indent=2)
             return True
-        except Exception:
+        except Exception as e:
+            flog.error("Failed to publish ports: {}".format(e))
             return False
 
 
@@ -52,5 +58,5 @@ def publish_ports(config_file=CONFIG):
     """Configure server files."""
     config = ConfigHandler(config_file)
     port_handler = PortConfiguration(config)
-    flog.info("Publishing ports")
+    flog.info("Publishing ports...")
     return port_handler.publish()
