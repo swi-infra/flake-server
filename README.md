@@ -1,4 +1,4 @@
-# Flake Legato
+# Flake
 
 Flake is a testing server with the purpose of emulating poor network conditions.
 It relies on software to emulate poor network conditions, by introducing delays and loss of packets in the link between a client (DUT) and the services it provides (HTTP/HTTPS/UDP/iperf).
@@ -40,7 +40,7 @@ It is important to test these situations to ensure that if a given product is on
 
 Packet delay is the amount of time that the packet is held up before routing to the destination.
 Packet delay is naturally introduced in processing delay, which occures when the packet is being routed through the network layers and when routing to and from the user through the network.
-Using Flake Legato we can emulate extended packet delay to see how a product reacts to it.
+Using Flake we can emulate extended packet delay to see how a product reacts to it.
 Packet delay can produce network disruptions and connectivity losses.
 
 It is important to test these situations to ensure that if a given product is on a poor network it is still able to have successful communication.
@@ -77,13 +77,23 @@ The architecture relies on 3 Docker containers:
 
 The service includes a JavaScript generator that helps to generate links, but the overall structure is:
 
-| Protocol | Port |
-| -------- | ---- |
-| HTTP     | 2xxx |
-| HTTPS    | 3xxx |
-| UDP      | 4xxx |
-| iperf    | 5xxx |
-| echo     | 6xxx |
+| Protocol              | Port |
+| --------------------- | ---- |
+| HTTP                  | 2xxx |
+| HTTPS                 | 3xxx |
+| UDP                   | 4xxx |
+| iperf                 | 5xxx |
+| iperf mirror 1        | 5x2x |
+| iperf mirror 2        | 5x4x |
+| iperf mirror 3        | 5x6x |
+| iperf mirror 4        | 5x8x |
+| echo tcp/udp          | 6xxx |
+| echo tcp tls          | 6x5x |
+| echo tcp tls ma       | 6x6x |
+| echo tcp tls ecdsa    | 6x7x |
+| echo tcp tls ecdsa ma | 6x8x |
+| dtls                  | 7x0x |
+| echo dtls             | 7x5x |
 
 | Delay | Port |
 | ----- | ---- |
@@ -91,19 +101,12 @@ The service includes a JavaScript generator that helps to generate links, but th
 | 100ms | x1xx |
 | 200ms | x2xx |
 
-| Loss  | Port |
-| ----- | ---- |
-| 0%    | xx00 |
-| 0.25% | xx01 |
-| 0.5%  | xx02 |
-| 1%    | xx03 |
-| 1.5%  | xx04 |
-| 2.5%  | xx05 |
-| 5%    | xx06 |
-| 10%   | xx07 |
-| 15%   | xx08 |
-| 25%   | xx09 |
-| 50%   | xx10 |
+| Loss | Port |
+| ---- | ---- |
+| 0%   | xx00 |
+| 1%   | xx01 |
+| 15%  | xx02 |
+| 50%  | xx03 |
 
 ##### Logging
 

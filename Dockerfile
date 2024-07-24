@@ -1,4 +1,4 @@
-FROM nginx:1.19.1
+FROM nginx:1.22.1-bullseye
 
 ARG DEV_BUILD
 RUN if [ "${DEV_BUILD}" = "1" ]; then echo "Building in dev mode..."; fi
@@ -27,6 +27,7 @@ RUN apt-get update && \
     python3-setuptools \
     ffmpeg \
     python3-pip && \
+    apt-get install --upgrade -y openssl --no-install-recommends && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -58,37 +59,41 @@ EXPOSE 21/tcp \
        80/tcp \
        443/tcp \
        8443/tcp \
-       2000-2049/tcp \
-       2100-2149/tcp \
-       2200-2249/tcp \
-       3000-3049/tcp \
-       3100-3149/tcp \
-       3200-3249/tcp \
-       4000-4049/udp \
-       4100-4149/udp \
-       4200-4249/udp \
-       5000-5090/tcp \
-       5100-5190/tcp \
-       5200-5290/tcp \
-       5000-5090/udp \
-       5100-5190/udp \
-       5200-5290/udp \
-       6000-6049/tcp \
-       6100-6149/tcp \
-       6200-6249/tcp \
-       6000-6049/udp \
-       6100-6149/udp \
-       6200-6249/udp \
-       6050-6099/tcp \
-       6150-6199/tcp \
-       6250-6299/tcp \
-       6300/tcp \
-       6301/tcp \
        1883-1884/tcp \
        8883-8884/tcp \
-       7000-7049/udp \
-       7100-7149/udp \
-       7200-7249/udp \
-       7050-7099/udp \
-       7150-7199/udp \
-       7250-7299/udp
+       6300-6301/tcp \
+       2000-2003/tcp \
+       2100-2103/tcp \
+       2200-2203/tcp \
+       3000-3003/tcp \
+       3100-3103/tcp \
+       3200-3203/tcp \
+       4000-4003/udp \
+       4100-4103/udp \
+       4200-4203/udp \
+       5000-5299/tcp \
+       5000-5299/udp \
+       6000-6003/tcp \
+       6100-6103/tcp \
+       6200-6203/tcp \
+       6000-6003/udp \
+       6100-6103/udp \
+       6200-6203/udp \
+       6050-6053/tcp \
+       6150-6153/tcp \
+       6250-6253/tcp \
+       6060-6063/tcp \
+       6160-6163/tcp \
+       6260-6263/tcp \
+       6070-6073/tcp \
+       6170-6173/tcp \
+       6270-6273/tcp \
+       6080-6083/tcp \
+       6180-6183/tcp \
+       6280-6283/tcp \
+       7000-7003/udp \
+       7100-7103/udp \
+       7200-7203/udp \
+       7050-7053/udp \
+       7150-7153/udp \
+       7250-7253/udp

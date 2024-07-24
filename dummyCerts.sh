@@ -20,6 +20,8 @@ if [ -d "${data_path}/conf/live" ]; then
     exit
 fi
 
+local_address=$(hostname -I | awk '{print $1}')
+
 echo "Creating dummy certificate for $domain..."
 mkdir -p "$data_path/conf/live/$domain"
 mkdir -p "$data_path/conf/live/ecdsa_flake"
@@ -31,22 +33,26 @@ mkdir -p "$data_path/../mqtt/certs/live/mqtt_flake/"
 openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 300 \
     -keyout $data_path/conf/live/$domain/privkey.pem \
     -out $data_path/conf/live/$domain/fullchain.pem \
-    -subj "/CN=localhost"
+    -subj "/CN=localhost" \
+    -addext "subjectAltName=DNS:localhost,IP:$local_address"
 
 openssl ecparam -out $data_path/conf/live/ecdsa_flake/privkey.pem -name secp256r1 -genkey
 openssl req -new -key $data_path/conf/live/ecdsa_flake/privkey.pem -x509 -nodes -days 300 \
     -out $data_path/conf/live/ecdsa_flake/fullchain.pem \
-    -subj "/CN=localhost"
+    -subj "/CN=localhost" \
+    -addext "subjectAltName=DNS:localhost,IP:$local_address"
 
 openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 300 \
     -keyout $data_path/conf/live/client-auth.httpbin.legato.io/privkey.pem \
     -out $data_path/conf/live/client-auth.httpbin.legato.io/fullchain.pem \
-    -subj "/CN=localhost"
+    -subj "/CN=localhost" \
+    -addext "subjectAltName=DNS:localhost,IP:$local_address"
 
 openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 300 \
     -keyout $data_path/conf/live/https_certs/privkey.pem \
     -out $data_path/conf/live/https_certs/ca-chain.cert.pem \
-    -subj "/CN=localhost"
+    -subj "/CN=localhost" \
+    -addext "subjectAltName=DNS:localhost,IP:$local_address"
 
 openssl req -new -x509 -days 300 -extensions v3_ca \
     -keyout $data_path/../mqtt/certs/live/mqtt_flake/ca.key \
@@ -56,7 +62,8 @@ openssl req -new -x509 -days 300 -extensions v3_ca \
 openssl genrsa -out $data_path/../mqtt/certs/live/mqtt_flake/server.key 2048
 openssl req -new -out $data_path/../mqtt/certs/live/mqtt_flake/server.csr \
     -key $data_path/../mqtt/certs/live/mqtt_flake/server.key \
-    -subj "/O=MQTT Broker/OU=MQTT Broker/CN=localhost"
+    -subj "/O=MQTT Broker/OU=MQTT Broker/CN=localhost" \
+    -addext "subjectAltName=DNS:localhost,IP:$local_address"
 openssl x509 -req -in $data_path/../mqtt/certs/live/mqtt_flake/server.csr \
     -CA $data_path/../mqtt/certs/live/mqtt_flake/ca.crt \
     -CAkey $data_path/../mqtt/certs/live/mqtt_flake/ca.key -CAcreateserial \

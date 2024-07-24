@@ -28,10 +28,10 @@ class DataFile:
         # Data conversion units
         self._units = {
             "B": 1,
-            "KB": 2 ** 10,
-            "MB": 2 ** 20,
-            "GB": 2 ** 30,
-            "TB": 2 ** 40,
+            "KB": 2**10,
+            "MB": 2**20,
+            "GB": 2**30,
+            "TB": 2**40,
         }
 
     @staticmethod
@@ -85,11 +85,11 @@ class DataFile:
     def check_file(self, size):
         """Check if file exists."""
         file_path = self._generate_file_path(size)
-        flog.info("Checking if {} exists".format(file_path))
+        flog.debug("Checking if {} exists".format(file_path))
         if not os.path.exists(file_path):
             flog.warning("{} does not exist".format(file_path))
             return False
-        flog.info("{} exists".format(file_path))
+        flog.debug("{} exists".format(file_path))
         return True
 
 
@@ -103,7 +103,7 @@ class TextFile(DataFile):
     def create_file(self, size):
         """Create data file (text)."""
         file_path = self._generate_file_path(size)
-        flog.info("Creating a text file %s of size %s" % (file_path, size))
+        flog.debug("Creating a text file %s of size %s" % (file_path, size))
         byte_size = self._parse_size(size)
         chunk_size = 1024
         with open(file_path, "w") as f:
@@ -131,7 +131,7 @@ class BinaryFile(DataFile):
     def create_file(self, size):
         """Create data file (binary)."""
         file_path = self._generate_file_path(size)
-        flog.info("Creating a binary file %s of size %s" % (file_path, size))
+        flog.debug("Creating a binary file %s of size %s" % (file_path, size))
         byte_size = self._parse_size(size)
         chunk_size = 1024 * 1024
         with open(file_path, "wb") as f:
@@ -153,7 +153,7 @@ class ImageFile(DataFile):
     def create_file(self, size):
         """Create data file (image)."""
         file_path = self._generate_file_path(size)
-        flog.info("Creating a image file %s of size %s" % (file_path, size))
+        flog.debug("Creating a image file %s of size %s" % (file_path, size))
         byte_size = self._parse_size(size)
         # Need a slow growing series sqrt(x)/2 works for this.
         size = int(np.sqrt(byte_size) / 2)
@@ -176,7 +176,7 @@ class VideoFile(DataFile):
     def create_file(self, size):
         """Create data file (video)."""
         file_path = self._generate_file_path(size)
-        flog.info("Creating a video file %s of size %s" % (file_path, size))
+        flog.debug("Creating a video file %s of size %s" % (file_path, size))
         byte_size = self._parse_size(size)
         file_str = self.template
         template_size = self._parse_size("0.5MB")
@@ -198,7 +198,7 @@ class AudioFile(DataFile):
     def create_file(self, size):
         """Create data file (audio)."""
         file_path = self._generate_file_path(size)
-        flog.info("Creating a audio file %s of size %s" % (file_path, size))
+        flog.debug("Creating a audio file %s of size %s" % (file_path, size))
         byte_size = self._parse_size(size)
         # Need to take fraction of the size to get correct output size.
         length = byte_size / 352830
