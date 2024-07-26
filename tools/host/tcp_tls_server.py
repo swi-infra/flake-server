@@ -60,6 +60,7 @@ class TcpTLSServer:
     def run(self):
         """Run TCP TLS server."""
         TLS_context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+        TLS_context.set_ciphers("ALL:@SECLEVEL=0")
         flog.debug("Loading cert and keyfile")
         TLS_context.load_cert_chain(certfile=self.fullchain, keyfile=self.privkey)
         if self.is_mutual:
