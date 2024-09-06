@@ -2,7 +2,7 @@
 set -x
 
 domain=${DOMAIN:-"flake.legato.io"}
-data_path=${DATA_PATH:-"./certs"}
+data_path=${DATA_PATH:-"/data/certbot"}
 
 # create dummy certs to allow nginx to start
 
