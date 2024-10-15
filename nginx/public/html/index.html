@@ -63,33 +63,76 @@
     </p>
     <hr class="my-4" />
 
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        urlBuilder();
+      });
+    </script>
     <form onchange="urlBuilder()">
       <div class="form-group">
         <label for="Scheme">Scheme: </label>
         <select id="Scheme" class="form-control form-control-md">
           <option value="http">http</option>
           <option value="https">https</option>
-          <option value="udp">udp</option>
           <option value="iperf3">iperf3</option>
-          <option value="iperf3 mirror 1">iperf3 mirror 1</option>
-          <option value="iperf3 mirror 2">iperf3 mirror 2</option>
-          <option value="iperf3 mirror 3">iperf3 mirror 3</option>
-          <option value="iperf3 mirror 4">iperf3 mirror 4</option>
-          <option value="tcp/udp echo">tcp/udp echo</option>
-          <option value="tcp tls echo">tcp tls echo</option>
-          <option value="tcp tls mutual auth echo"
-            >tcp tls mutual auth echo</option
-          >
-          <option value="ecdsa tcp tls echo">ecdsa tcp tls echo</option>
-          <option value="ecdsa tcp tls mutual auth echo"
-            >ecdsa tcp tls mutual auth echo</option
-          >
+          <option value="tcp">tcp</option>
+          <option value="tcp tls">tcp tls</option>
+          <option value="udp">udp</option>
           <option value="dtls">dtls</option>
-          <option value="dtls echo">dtls echo</option>
+          <option value="ftp">ftp</option>
+          <option value="ftps">ftps</option>
+          <option value="mqtt">mqtt</option>
+          <option value="mqtt tls">mqtt tls</option>
         </select>
       </div>
 
-      <div class="form-group">
+      <div class="form-group mirror-condition">
+        <label for="Mirror">Mirror:</label>
+        <select id="Mirror" class="form-control form-control-md">
+          <option value="Mirror 1">Mirror 1</option>
+          <option value="Mirror 2">Mirror 2</option>
+          <option value="Mirror 3">Mirror 3</option>
+          <option value="Mirror 4">Mirror 4</option>
+          <option value="Mirror 5">Mirror 5</option>
+        </select>
+      </div>
+
+      <div class="form-group testing-condition">
+        <label for="Testing">Testing:</label>
+        <select id="Testing" class="form-control form-control-md">
+          <option value="download">download</option>
+          <option class="http-condition" value="rest">rest</option>
+          <option class="udp-condition" value="echo">echo</option>
+        </select>
+      </div>
+
+      <div class="form-group security-condition">
+        <label for="Security">Security:</label>
+        <select id="Security" class="form-control form-control-md">
+          <option class="ftp-mqtt-condition" value="anonymous"
+            >anonymous</option
+          >
+          <option class="ftp-mqtt-condition" value="authenticated"
+            >authenticated</option
+          >
+          <option class="tcp-tls-condition" value="server auth"
+            >server auth</option
+          >
+          <option class="tcp-tls-condition" value="mutual auth"
+            >mutual auth</option
+          >
+        </select>
+      </div>
+
+      <div class="form-group cipher-condition">
+        <label for="Cipher">Cipher:</label>
+        <select id="Cipher" class="form-control form-control-md">
+          <option value="RSA">RSA</option>
+          <option value="ECDSA">ECDSA</option>
+        </select>
+      </div>
+
+      <div class="form-group emulation-condition">
         <label for="PacketDelay">Packet Delay:</label>
         <select id="PacketDelay" class="form-control form-control-md">
           <option value="0">0ms</option>
@@ -98,7 +141,7 @@
         </select>
       </div>
 
-      <div class="form-group">
+      <div class="form-group emulation-condition">
         <label for="PacketLoss">Packet Loss: </label>
         <select id="PacketLoss" class="form-control form-control-md">
           <option value="0">0%</option>
@@ -108,7 +151,7 @@
         </select>
       </div>
 
-      <div class="form-group hide-on-condition">
+      <div class="form-group download-condition">
         <label for="FileType">File Type: </label>
         <select id="FileType" class="form-control form-control-md">
           <option value="text">text</option>
@@ -119,7 +162,7 @@
         </select>
       </div>
 
-      <div class="form-group hide-on-condition">
+      <div class="form-group download-condition">
         <label for="FileSize">File Size: </label>
         <select id="FileSize" class="form-control form-control-md">
           <option value="0.5MB">0.5MB</option>
@@ -151,23 +194,173 @@
       </button>
     </div>
     <script>
-      function updateForm(scheme) {
+      function updateForm(scheme, testing) {
+        // Testing condition
         if (
-          scheme.includes("tcp") ||
-          scheme.includes("udp") ||
-          scheme.includes("dtls") ||
-          scheme.includes("iperf3")
+          scheme === "http" ||
+          scheme === "https" ||
+          scheme === "udp" ||
+          scheme === "dtls"
         ) {
           document
-            .querySelectorAll(".form-group.hide-on-condition")
+            .querySelectorAll(".form-group.testing-condition")
             .forEach(function (element) {
-              element.style.display = "none";
+              element.style.display = "block";
             });
         } else {
           document
-            .querySelectorAll(".form-group.hide-on-condition")
+            .querySelectorAll(".form-group.testing-condition")
+            .forEach(function (element) {
+              element.style.display = "none";
+            });
+        }
+        // Mirror condition
+        if (scheme === "iperf3") {
+          document
+            .querySelectorAll(".form-group.mirror-condition")
             .forEach(function (element) {
               element.style.display = "block";
+            });
+        } else {
+          document
+            .querySelectorAll(".form-group.mirror-condition")
+            .forEach(function (element) {
+              element.style.display = "none";
+            });
+        }
+        // Testing options condition
+        if (scheme === "http" || scheme === "https") {
+          document
+            .querySelectorAll(".http-condition")
+            .forEach(function (element) {
+              element.style.display = "block";
+            });
+        } else {
+          document
+            .querySelectorAll(".http-condition")
+            .forEach(function (element) {
+              element.style.display = "none";
+            });
+        }
+        if (scheme === "udp" || scheme === "dtls") {
+          document
+            .querySelectorAll(".udp-condition")
+            .forEach(function (element) {
+              element.style.display = "block";
+            });
+        } else {
+          document
+            .querySelectorAll(".udp-condition")
+            .forEach(function (element) {
+              element.style.display = "none";
+            });
+        }
+        // Security condition
+        if (
+          scheme === "tcp tls" ||
+          scheme === "ftp" ||
+          scheme === "ftps" ||
+          scheme === "mqtt" ||
+          scheme === "mqtt tls"
+        ) {
+          document
+            .querySelectorAll(".form-group.security-condition")
+            .forEach(function (element) {
+              element.style.display = "block";
+            });
+        } else {
+          document
+            .querySelectorAll(".form-group.security-condition")
+            .forEach(function (element) {
+              element.style.display = "none";
+            });
+        }
+        // Security options condition
+        if (scheme === "tcp tls") {
+          document
+            .querySelectorAll(".tcp-tls-condition")
+            .forEach(function (element) {
+              element.style.display = "block";
+            });
+        } else {
+          document
+            .querySelectorAll(".tcp-tls-condition")
+            .forEach(function (element) {
+              element.style.display = "none";
+            });
+        }
+        if (
+          scheme === "ftp" ||
+          scheme === "ftps" ||
+          scheme === "mqtt" ||
+          scheme === "mqtt tls"
+        ) {
+          document
+            .querySelectorAll(".ftp-mqtt-condition")
+            .forEach(function (element) {
+              element.style.display = "block";
+            });
+        } else {
+          document
+            .querySelectorAll(".ftp-mqtt-condition")
+            .forEach(function (element) {
+              element.style.display = "none";
+            });
+        }
+        // Cipher condition
+        if (scheme === "tcp tls") {
+          document
+            .querySelectorAll(".form-group.cipher-condition")
+            .forEach(function (element) {
+              element.style.display = "block";
+            });
+        } else {
+          document
+            .querySelectorAll(".form-group.cipher-condition")
+            .forEach(function (element) {
+              element.style.display = "none";
+            });
+        }
+        // Emulation condition
+        if (
+          scheme === "http" ||
+          scheme === "https" ||
+          scheme === "iperf3" ||
+          scheme === "tcp" ||
+          scheme === "tcp tls" ||
+          scheme === "udp" ||
+          scheme === "dtls"
+        ) {
+          document
+            .querySelectorAll(".form-group.emulation-condition")
+            .forEach(function (element) {
+              element.style.display = "block";
+            });
+        } else {
+          document
+            .querySelectorAll(".form-group.emulation-condition")
+            .forEach(function (element) {
+              element.style.display = "none";
+            });
+        }
+        // Download condition
+        if (
+          (scheme === "http" ||
+            scheme === "https" ||
+            scheme === "udp" ||
+            scheme === "dtls") &&
+          testing === "download"
+        ) {
+          document
+            .querySelectorAll(".form-group.download-condition")
+            .forEach(function (element) {
+              element.style.display = "block";
+            });
+        } else {
+          document
+            .querySelectorAll(".form-group.download-condition")
+            .forEach(function (element) {
+              element.style.display = "none";
             });
         }
       }
@@ -178,19 +371,20 @@
         let schemePort = {
           http: 2000,
           https: 3000,
-          udp: 4000,
+          "udp download": 4000,
           iperf3: 5000,
-          "iperf3 mirror 1": 5020,
-          "iperf3 mirror 2": 5040,
-          "iperf3 mirror 3": 5060,
-          "iperf3 mirror 4": 5080,
-          "tcp/udp echo": 6000,
+          "tcp echo": 6000,
+          "udp echo": 6000,
           "tcp tls echo": 6050,
           "tcp tls mutual auth echo": 6060,
           "ecdsa tcp tls echo": 6070,
           "ecdsa tcp tls mutual auth echo": 6080,
-          dtls: 7000,
+          "dtls download": 7000,
           "dtls echo": 7050,
+          ftp: 21,
+          ftps: 21,
+          mqtt: 1883,
+          "mqtt tls": 8883,
         };
         let fileExtension = {
           text: ".txt",
@@ -200,31 +394,93 @@
           audio: ".wav",
         };
 
-        // get scheme
         let scheme = document.getElementById("Scheme").value;
-        updateForm(scheme);
+        let mirror = document.getElementById("Mirror").value;
+        let testing = document.getElementById("Testing").value;
+        let security = document.getElementById("Security").value;
+        let cipher = document.getElementById("Cipher").value;
+        let packetDelay = document.getElementById("PacketDelay").value;
+        let packetLoss = document.getElementById("PacketLoss").value;
+
+        updateForm(scheme, testing);
+
+        let baseSite = "flake.central";
+        if ((scheme === "http" || scheme === "https") && testing === "rest") {
+          baseSite = "httpbin.central";
+        }
         if (
-          scheme.includes("tcp") ||
-          scheme.includes("udp") ||
-          scheme.includes("dtls")
+          scheme === "tcp" ||
+          scheme === "tcp tls" ||
+          scheme === "udp" ||
+          scheme === "dtls" ||
+          scheme === "ftp" ||
+          scheme === "ftps" ||
+          scheme === "mqtt" ||
+          scheme === "mqtt tls"
         ) {
-          url += "flake.central:";
-        } else if (scheme.includes("iperf")) {
-          url += "iperf3 -c flake.central -p ";
+          url += `${baseSite}:`;
+        } else if (scheme === "iperf3") {
+          url += `iperf3 -c ${baseSite} -p `;
         } else {
-          url += scheme + "://flake.central:";
+          url += scheme + `://${baseSite}:`;
+        }
+        if (scheme === "udp" || scheme === "dtls") {
+          if (testing === "download") {
+            scheme += " download";
+          } else {
+            scheme += " echo";
+          }
+        }
+        if (scheme === "tcp") {
+          scheme = "tcp echo";
+        }
+        if (scheme === "tcp tls") {
+          if (security === "server auth") {
+            if (cipher === "RSA") {
+              scheme = "tcp tls echo";
+            } else {
+              scheme = "ecdsa tcp tls echo";
+            }
+          } else {
+            if (cipher === "RSA") {
+              scheme = "tcp tls mutual auth echo";
+            } else {
+              scheme = "ecdsa tcp tls mutual auth echo";
+            }
+          }
         }
         port += schemePort[scheme];
-        port += parseInt(document.getElementById("PacketDelay").value);
-        port += parseInt(document.getElementById("PacketLoss").value);
+        console.log(scheme);
+        console.log(port);
+        if (scheme === "iperf3") {
+          if (mirror === "Mirror 2") {
+            port += 20;
+          } else if (mirror === "Mirror 3") {
+            port += 40;
+          } else if (mirror === "Mirror 4") {
+            port += 60;
+          } else if (mirror === "Mirror 5") {
+            port += 80;
+          }
+        }
+        if (scheme === "mqtt" || scheme === "mqtt tls") {
+          if (security === "authenticated") {
+            port += 1;
+          }
+        }
+        if (
+          scheme !== "ftp" &&
+          scheme !== "ftps" &&
+          scheme !== "mqtt" &&
+          scheme !== "mqtt tls"
+        ) {
+          port += parseInt(packetDelay);
+          port += parseInt(packetLoss);
+        }
         url += port;
         if (
-          !(
-            scheme.includes("tcp") ||
-            scheme.includes("udp") ||
-            scheme.includes("dtls") ||
-            scheme.includes("iperf3")
-          )
+          (scheme === "http" || scheme === "https") &&
+          testing === "download"
         ) {
           url += "/";
 
