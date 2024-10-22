@@ -24,10 +24,15 @@ def tcp_handle(client_sock, killable=False):
                 data_str = data.decode("utf-8")
             except Exception:
                 pass
-            if killable and data_str and "kill" in data_str:
-                flog.debug("Killing Socket...")
-                pid = os.getpid()
-                os.kill(pid, signal.SIGKILL)
+            if killable and data_str:
+                if "kill" in data_str:
+                    flog.debug("Killing Socket...")
+                    pid = os.getpid()
+                    os.kill(pid, signal.SIGKILL)
+                if "stop" in data_str:
+                    flog.debug("Stopping Socket...")
+                    client_sock.close()
+                    break
             if data:
                 flog.debug("Received TCP data: %s" % data)
                 client_sock.send(data)
