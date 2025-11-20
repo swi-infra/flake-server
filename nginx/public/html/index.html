@@ -83,6 +83,7 @@
           <option value="ftps">ftps</option>
           <option value="mqtt">mqtt</option>
           <option value="mqtt tls">mqtt tls</option>
+          <option value="lwm2m">lwm2m</option>
         </select>
       </div>
 
@@ -175,6 +176,30 @@
           <option value="50MB">50MB</option>
           <option value="75MB">75MB</option>
           <option value="100MB">100MB</option>
+        </select>
+      </div>
+
+      <div class="form-group lwm2m-condition">
+        <label for="ServerType">Server Type:</label>
+        <select id="ServerType" class="form-control form-control-md">
+          <option value="Bootstrap">Bootstrap</option>
+          <option value="Device Management">Device Management</option>
+        </select>
+      </div>
+
+      <div class="form-group lwm2m-condition">
+        <label for="AccessMethod">Access Method:</label>
+        <select id="AccessMethod" class="form-control form-control-md">
+          <option value="webGUI">webGUI</option>
+          <option value="COAP">COAP</option>
+        </select>
+      </div>
+
+      <div class="form-group lwm2m-coap-condition">
+        <label for="Endpoint">Endpoint:</label>
+        <select id="Endpoint" class="form-control form-control-md">
+          <option value="CoAP over UDP">CoAP over UDP</option>
+          <option value="CoAP over DTLS">CoAP over DTLS</option>
         </select>
       </div>
     </form>
@@ -363,6 +388,43 @@
               element.style.display = "none";
             });
         }
+        // LWM2M condition
+        if (scheme === "lwm2m") {
+          document
+            .querySelectorAll(".form-group.lwm2m-condition")
+            .forEach(function (element) {
+              element.style.display = "block";
+            });
+        } else {
+          document
+            .querySelectorAll(".form-group.lwm2m-condition")
+            .forEach(function (element) {
+              element.style.display = "none";
+            });
+        }
+        // LWM2M COAP endpoint condition
+        if (scheme === "lwm2m") {
+          let currentAccessMethod = document.getElementById("AccessMethod").value;
+          if (currentAccessMethod === "COAP") {
+            document
+              .querySelectorAll(".form-group.lwm2m-coap-condition")
+              .forEach(function (element) {
+                element.style.display = "block";
+              });
+          } else {
+            document
+              .querySelectorAll(".form-group.lwm2m-coap-condition")
+              .forEach(function (element) {
+                element.style.display = "none";
+              });
+          }
+        } else {
+          document
+            .querySelectorAll(".form-group.lwm2m-coap-condition")
+            .forEach(function (element) {
+              element.style.display = "none";
+            });
+        }
       }
 
       function urlBuilder() {
@@ -385,6 +447,7 @@
           ftps: 21,
           mqtt: 1883,
           "mqtt tls": 8883,
+          lwm2m: 8083,
         };
         let fileExtension = {
           text: ".txt",
@@ -401,6 +464,9 @@
         let cipher = document.getElementById("Cipher").value;
         let packetDelay = document.getElementById("PacketDelay").value;
         let packetLoss = document.getElementById("PacketLoss").value;
+        let serverType = document.getElementById("ServerType").value;
+        let accessMethod = document.getElementById("AccessMethod").value;
+        let endpoint = document.getElementById("Endpoint").value;
 
         updateForm(scheme, testing);
 
@@ -408,7 +474,34 @@
         if ((scheme === "http" || scheme === "https") && testing === "rest") {
           baseSite = "httpbin.legato.io";
         }
-        if (
+
+        if (scheme === "lwm2m") {
+          if (serverType === "Bootstrap") {
+            baseSite = "lwm2m.legato.io";
+          } else if (serverType === "Device Management") {
+            baseSite = "server.lwm2m.legato.io";
+          }
+
+          if (accessMethod === "webGUI") {
+            url += "http://";
+          } else if (accessMethod === "COAP") {
+            url += "coap://";
+          }
+          url += baseSite;
+
+          if (accessMethod === "COAP") {
+            url += ":";
+            if (serverType === "Bootstrap") {
+              schemePort["lwm2m"] = 5783;
+            } else if (serverType === "Device Management") {
+              schemePort["lwm2m"] = 5683;
+            }
+            if (endpoint === "CoAP over DTLS") {
+              schemePort["lwm2m"] += 1;
+            }
+            url += schemePort["lwm2m"];
+          }
+        } else if (
           scheme === "tcp" ||
           scheme === "tcp tls" ||
           scheme === "udp" ||
@@ -449,7 +542,10 @@
             }
           }
         }
-        port += schemePort[scheme];
+        // Skip port calculation for lwm2m (handled separately)
+        if (scheme !== "lwm2m") {
+          port += schemePort[scheme];
+        }
         console.log(scheme);
         console.log(port);
         if (scheme === "iperf3") {
@@ -472,12 +568,15 @@
           scheme !== "ftp" &&
           scheme !== "ftps" &&
           scheme !== "mqtt" &&
-          scheme !== "mqtt tls"
+          scheme !== "mqtt tls" &&
+          scheme !== "lwm2m"
         ) {
           port += parseInt(packetDelay);
           port += parseInt(packetLoss);
         }
-        url += port;
+        if (scheme !== "lwm2m") {
+          url += port;
+        }
         if (
           (scheme === "http" || scheme === "https") &&
           testing === "download"
